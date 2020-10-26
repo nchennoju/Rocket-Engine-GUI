@@ -14,8 +14,8 @@ void setup() {
 // Code Start
 void loop() {
 
-  // Read Pot Value
-  int val = analogRead(potPin);
+  // Read Pot Value and Change from Integer to Volt Measurement
+  int val = map(analogRead(potPin),0,1023,0,5);
   
   // Display Voltage in serial monitor
   Serial.println(val);
