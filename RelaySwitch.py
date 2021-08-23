@@ -84,16 +84,22 @@ class Buttons:
         self.arduino = arduino
 
     def actionOff(self):
-        self.led.setState(False)
-        self.symbol.setState(False)
-        self.arduino.write(str.encode(str(self.pinNum) + "0"))
-        print(str(self.pinNum) + "0")
+        try:
+            self.arduino.write(str.encode(str(self.pinNum) + "0"))
+            self.led.setState(False)
+            self.symbol.setState(False)
+            print(str(self.pinNum) + "0 (OFF)")
+        except:
+            print('Serial Error: Arduino Not Connected or Detected ' + str(self.pinNum))
 
     def actionOn(self):
-        self.led.setState(True)
-        self.symbol.setState(True)
-        self.arduino.write(str.encode(str(self.pinNum) + "1"))
-        print(str(self.pinNum) + "1")
+        try:
+            self.arduino.write(str.encode(str(self.pinNum) + "1"))
+            self.led.setState(True)
+            self.symbol.setState(True)
+            print(str(self.pinNum) + "1 (ON)")
+        except:
+            print('Serial Error: Arduino Not Connected or Detected ' + str(self.pinNum))
 
     def setLedState(self, state):
         self.led.setState(state)

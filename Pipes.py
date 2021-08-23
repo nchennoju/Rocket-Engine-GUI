@@ -25,6 +25,9 @@ line4: 9:00
         ln3
         
 By modulating these input parameters, any pipe can be designed to fit the GUI P&ID.
+
+Additionally, all components are linked together with a singly linked list (which functions more as a map). This allows
+mass flow to be indicated on the GUI P&ID sketch while using a basic map traversal method.
 """
 
 class Pipe:
@@ -120,6 +123,7 @@ class Pipe:
             self.c.create_line(xy, width=1, fill='white')
 
     def setNeighbors(self, top, right, bottom, left):
+        # function used to populate map to establish relations between this pipe and components around it
         self.top = top
         self.right = right
         self.bottom = bottom

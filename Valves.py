@@ -89,25 +89,25 @@ class Solenoid:
     def setState(self, open):
         inlet = False
         if (self.inlet == 1):
-            if(self.top.getState()):
+            if(self.top is not None and self.top.getState()):
                 self.c.itemconfig(self.f1, fill=self.fluidColor)
                 inlet = True
             else:
                 self.c.itemconfig(self.f1, fill='black')
         if (self.inlet == 2):
-            if(self.right.getState()):
+            if(self.right is not None and self.right.getState()):
                 self.c.itemconfig(self.f2, fill=self.fluidColor)
                 inlet = True
             else:
                 self.c.itemconfig(self.f2, fill='black')
         if (self.inlet == 3):
-            if (self.bottom.getState()):
+            if (self.bottom is not None and self.bottom.getState()):
                 self.c.itemconfig(self.f3, fill=self.fluidColor)
                 inlet = True
             else:
                 self.c.itemconfig(self.f3, fill='black')
         if (self.inlet == 4):
-            if (self.left.getState()):
+            if (self.left is not None and self.left.getState()):
                 self.c.itemconfig(self.f4, fill=self.fluidColor)
                 inlet = True
             else:
@@ -168,6 +168,16 @@ class Solenoid:
             self.c.itemconfig(self.f4, fill=self.fluidColor)
         else:
             self.c.itemconfig(self.f4, fill='black')
+
+    def setFill(self, fill_1, fill_2, fill_3, fill_4):
+        if (fill_1):
+            self.c.itemconfig(self.f1, fill=self.fluidColor)
+        if (fill_2):
+            self.c.itemconfig(self.f2, fill=self.fluidColor)
+        if (fill_3):
+            self.c.itemconfig(self.f3, fill=self.fluidColor)
+        if (fill_4):
+            self.c.itemconfig(self.f4, fill=self.fluidColor)
 
     def getPipes(self):
         return [self.l1, self.l2, self.l3, self.l4]
@@ -255,6 +265,16 @@ class Stepper:
             self.c.itemconfig(self.f4, fill=self.fluidColor)
         else:
             self.c.itemconfig(self.f4, fill='black')
+
+    def setFill(self, fill_1, fill_2, fill_3, fill_4):
+        if (fill_1):
+            self.c.itemconfig(self.f1, fill=self.fluidColor)
+        if (fill_2):
+            self.c.itemconfig(self.f2, fill=self.fluidColor)
+        if (fill_3):
+            self.c.itemconfig(self.f3, fill=self.fluidColor)
+        if (fill_4):
+            self.c.itemconfig(self.f4, fill=self.fluidColor)
 
     def getPipes(self):
         return [self.fill1, self.fill2, self.fill3, self.fill4]
@@ -360,6 +380,16 @@ class Orifice:
                 self.c.itemconfig(self.f3, fill='black')
             if (self.line_4):
                 self.c.itemconfig(self.f4, fill='black')
+
+    def setFill(self, fill_1, fill_2, fill_3, fill_4):
+        if (fill_1):
+            self.c.itemconfig(self.f1, fill=self.fluidColor)
+        if (fill_2):
+            self.c.itemconfig(self.f2, fill=self.fluidColor)
+        if (fill_3):
+            self.c.itemconfig(self.f3, fill=self.fluidColor)
+        if (fill_4):
+            self.c.itemconfig(self.f4, fill=self.fluidColor)
 
     def getState(self):
         return self.state
@@ -468,6 +498,16 @@ class PressureSensor:
             if (self.line_4):
                 self.c.itemconfig(self.f4, fill='black')
 
+    def setFill(self, fill_1, fill_2, fill_3, fill_4):
+        if (fill_1):
+            self.c.itemconfig(self.f1, fill=self.fluidColor)
+        if (fill_2):
+            self.c.itemconfig(self.f2, fill=self.fluidColor)
+        if (fill_3):
+            self.c.itemconfig(self.f3, fill=self.fluidColor)
+        if (fill_4):
+            self.c.itemconfig(self.f4, fill=self.fluidColor)
+
     def getState(self):
         return self.state
 
@@ -566,6 +606,16 @@ class TempSensor:
                 self.c.itemconfig(self.f3, fill='black')
             if (self.line_4):
                 self.c.itemconfig(self.f4, fill='black')
+
+    def setFill(self, fill_1, fill_2, fill_3, fill_4):
+        if (fill_1):
+            self.c.itemconfig(self.f1, fill=self.fluidColor)
+        if (fill_2):
+            self.c.itemconfig(self.f2, fill=self.fluidColor)
+        if (fill_3):
+            self.c.itemconfig(self.f3, fill=self.fluidColor)
+        if (fill_4):
+            self.c.itemconfig(self.f4, fill=self.fluidColor)
 
     def getState(self):
         return self.state
