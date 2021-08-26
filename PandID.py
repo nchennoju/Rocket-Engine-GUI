@@ -1,10 +1,7 @@
 import tkinter as tk
 
-import Nozzle
-import Tank
-import Valves
-import Pipes
 import Header
+import DiagramComponents
 
 
 class Liquid_Engine_Plumbing:
@@ -27,20 +24,20 @@ class Liquid_Engine_Plumbing:
         self.header.getWidget().place(x=gridLen * 0, y=gridLen * 0)
 
         # All TANKS
-        self.gn2 = Tank.Tank(self.win, 'black', 'GN2', '#1d2396', gridLen, gridLen)
-        self.lox = Tank.Tank(self.win, 'black', 'LOx', '#1d2396', gridLen, gridLen)
-        self.k = Tank.Tank(self.win, 'black', 'K', '#1d2396', gridLen, gridLen)
+        self.gn2 = DiagramComponents.Tank(self.win, 'black', 'GN2', '#1d2396', gridLen, gridLen)
+        self.lox = DiagramComponents.Tank(self.win, 'black', 'LOx', '#1d2396', gridLen, gridLen)
+        self.k = DiagramComponents.Tank(self.win, 'black', 'K', '#1d2396', gridLen, gridLen)
         self.gn2.getWidget().place(x=gridLen * 3, y=gridLen * 1)
         self.lox.getWidget().place(x=gridLen * 1, y=gridLen * 5)
         self.k.getWidget().place(x=gridLen * 6, y=gridLen * 5)
 
         # All SOLENOID VALVES
-        self.one = Valves.Solenoid(self.win, 'black', 1, gridLen, gridLen, False, True, True, False, fluidColor)
-        self.two = Valves.Solenoid(self.win, 'black', 2, gridLen, gridLen, False, True, False, False, fluidColor)
-        self.three = Valves.Solenoid(self.win, 'black', 3, gridLen, gridLen, False, False, True, True, fluidColor)
-        self.four = Valves.Solenoid(self.win, 'black', 4, gridLen, gridLen, False, True, False, False, fluidColor)
-        self.five = Valves.Solenoid(self.win, 'black', 5, gridLen, gridLen, True, False, False, True, fluidColor)
-        self.six = Valves.Solenoid(self.win, 'black', 6, gridLen, gridLen, False, True, False, True, fluidColor)
+        self.one = DiagramComponents.Solenoid(self.win, 'black', 1, gridLen, gridLen, False, True, True, False, fluidColor)
+        self.two = DiagramComponents.Solenoid(self.win, 'black', 2, gridLen, gridLen, False, True, False, False, fluidColor)
+        self.three = DiagramComponents.Solenoid(self.win, 'black', 3, gridLen, gridLen, False, False, True, True, fluidColor)
+        self.four = DiagramComponents.Solenoid(self.win, 'black', 4, gridLen, gridLen, False, True, False, False, fluidColor)
+        self.five = DiagramComponents.Solenoid(self.win, 'black', 5, gridLen, gridLen, True, False, False, True, fluidColor)
+        self.six = DiagramComponents.Solenoid(self.win, 'black', 6, gridLen, gridLen, False, True, False, True, fluidColor)
         self.one.getWidget().place(x=gridLen * 1, y=gridLen * 2)
         self.one.setIn(2)
         self.one.setOut(3)
@@ -59,36 +56,26 @@ class Liquid_Engine_Plumbing:
         self.six.setOut(2)
 
         # All STEPPER
-        self.s1 = Valves.Stepper(self.win, 'black', gridLen, gridLen, True, False, False, True, '#41d94d', False, False, False,
-                            False)
-        self.s2 = Valves.Stepper(self.win, 'black', gridLen, gridLen, False, True, True, True, '#41d94d', False, False, False,
-                            False)
+        self.s1 = DiagramComponents.Stepper(self.win, 'black', gridLen, gridLen, True, False, False, True, '#41d94d')
+        self.s2 = DiagramComponents.Stepper(self.win, 'black', gridLen, gridLen, False, True, True, True, '#41d94d')
         self.s1.getWidget().place(x=gridLen * 6, y=gridLen * 7)
         self.s2.getWidget().place(x=gridLen * 2, y=gridLen * 8)
 
         # All ORIFICES
-        self.o1 = Valves.Orifice(self.win, 'black', gridLen, gridLen, True, False, True, False, '#41d94d', False, False, False,
-                            False)
-        self.o2 = Valves.Orifice(self.win, 'black', gridLen, gridLen, False, True, True, True, '#41d94d', False, False, False,
-                            False)
+        self.o1 = DiagramComponents.Orifice(self.win, 'black', gridLen, gridLen, True, False, True, False, '#41d94d')
+        self.o2 = DiagramComponents.Orifice(self.win, 'black', gridLen, gridLen, False, True, True, True, '#41d94d')
         self.o1.getWidget().place(x=gridLen * 1, y=gridLen * 6)
         self.o2.getWidget().place(x=gridLen * 5, y=gridLen * 7)
 
         # All Pressure Sensors
-        self.ps1 = Valves.PressureSensor(self.win, 'black', gridLen, gridLen, False, True, False, False, '#41d94d', False, False,
-                                    False, False)
-        self.ps2 = Valves.PressureSensor(self.win, 'black', gridLen, gridLen, False, False, False, True, '#41d94d', False, False,
-                                    False,
-                                    False)
-        self.ps3 = Valves.PressureSensor(self.win, 'black', gridLen, gridLen, False, True, True, True, '#41d94d', False, False,
-                                    False, False)
+        self.ps1 = DiagramComponents.PressureSensor(self.win, 'black', gridLen, gridLen, False, True, False, False, '#41d94d')
+        self.ps2 = DiagramComponents.PressureSensor(self.win, 'black', gridLen, gridLen, False, False, False, True, '#41d94d')
+        self.ps3 = DiagramComponents.PressureSensor(self.win, 'black', gridLen, gridLen, False, True, True, True, '#41d94d')
         self.ps1.getWidget().place(x=gridLen * 0, y=gridLen * 3)
         self.ps2.getWidget().place(x=gridLen * 7, y=gridLen * 3)
         self.ps3.getWidget().place(x=gridLen * 5, y=gridLen * 9)
 
-        self.tp1 = Valves.TempSensor(self.win, 'black', gridLen, gridLen, True, False, False, False, '#41d94d', False, False,
-                                False,
-                                False)
+        self.tp1 = DiagramComponents.TempSensor(self.win, 'black', gridLen, gridLen, True, False, False, False, '#41d94d')
         self.tp1.getWidget().place(x=gridLen * 5, y=gridLen * 10)
 
         # All Text boxes
@@ -102,28 +89,28 @@ class Liquid_Engine_Plumbing:
         self.t4.getWidget().place(x=gridLen * 7, y=gridLen * 9)
 
         # All PIPES
-        self.p1 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, False, True, False, True, '#41d94d', False)
-        self.p2 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, True, '#41d94d', False)
-        self.p3 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, False, True, False, True, '#41d94d', False)
-        self.p4 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, False, True, False, True, '#41d94d', False)
-        self.p5 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, True, '#41d94d', False)
-        self.p6 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, False, '#41d94d', False)
-        self.p7 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, False, '#41d94d', False)
-        self.p8 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, True, '#41d94d', False)
-        self.p9 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, False, '#41d94d', False)
-        self.p10 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, True, '#41d94d', False)
-        self.p11 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, False, '#41d94d', False)
-        self.p12 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, False, '#41d94d', False)
-        self.p13 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, False, '#41d94d', False)
-        self.p14 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, False, '#41d94d', False)
-        self.p15 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, False, '#41d94d', False)
-        self.p16 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, False, '#41d94d', False)
-        self.p17 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, True, False, False, '#41d94d', False)
-        self.p18 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, False, False, True, True, '#41d94d', False)
-        self.p19 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, True, False, False, '#41d94d', False)
-        self.p20 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, False, True, True, True, '#41d94d', False)
-        self.p21 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, False, True, False, True, '#41d94d', False)
-        self.p22 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, False, False, True, '#41d94d', False)
+        self.p1 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, False, True, False, True, '#41d94d', False)
+        self.p2 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, True, '#41d94d', False)
+        self.p3 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, False, True, False, True, '#41d94d', False)
+        self.p4 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, False, True, False, True, '#41d94d', False)
+        self.p5 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, True, '#41d94d', False)
+        self.p6 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, False, '#41d94d', False)
+        self.p7 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, False, '#41d94d', False)
+        self.p8 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, True, '#41d94d', False)
+        self.p9 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, False, '#41d94d', False)
+        self.p10 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, True, '#41d94d', False)
+        self.p11 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, False, '#41d94d', False)
+        self.p12 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, False, '#41d94d', False)
+        self.p13 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, False, '#41d94d', False)
+        self.p14 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, False, True, False, '#41d94d', False)
+        self.p15 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, False, '#41d94d', False)
+        self.p16 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, False, '#41d94d', False)
+        self.p17 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, True, False, False, '#41d94d', False)
+        self.p18 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, False, False, True, True, '#41d94d', False)
+        self.p19 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, True, False, False, '#41d94d', False)
+        self.p20 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, False, True, True, True, '#41d94d', False)
+        self.p21 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, False, True, False, True, '#41d94d', False)
+        self.p22 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, False, False, True, '#41d94d', False)
         self.p1.getWidget().place(x=gridLen * 2, y=gridLen * 2)
         self.p2.getWidget().place(x=gridLen * 3, y=gridLen * 2)
         self.p3.getWidget().place(x=gridLen * 4, y=gridLen * 2)
@@ -148,7 +135,7 @@ class Liquid_Engine_Plumbing:
         self.p22.getWidget().place(x=gridLen * 6, y=gridLen * 9)
 
         # NOZZLE
-        self.n = Nozzle.Nozzle(self.win, 'black', gridLen, gridLen * 1.5)
+        self.n = DiagramComponents.Nozzle(self.win, 'black', gridLen, gridLen * 1.5)
         self.n.getWidget().place(x=gridLen * 3, y=gridLen * 10)
 
         #self.s2.setNeighbors(None, self.five, self.p19, self.p16)
@@ -266,36 +253,36 @@ class Liquid_Engine_Plumbing:
 
         # Basic traversal method
         while(len(listMultiplePaths) > 0):
-            if(type(head) is Pipes.Pipe):
+            if(type(head) is DiagramComponents.Pipe):
                 head.setState(True)
 
             if (head.top is not None):
-                if(type(head.top) is Valves.Solenoid and head.top.getState()):
+                if(type(head.top) is DiagramComponents.Solenoid and head.top.getState()):
                     listMultiplePaths.append(head.top)
-                elif(type(head.top) is not Valves.Solenoid and type(head.top) is not Valves.Stepper):
+                elif(type(head.top) is not DiagramComponents.Solenoid and type(head.top) is not DiagramComponents.Stepper):
                     listMultiplePaths.append(head.top)
-                elif (type(head.top) is Valves.Stepper and head.top.getPercentage() > 0):
+                elif (type(head.top) is DiagramComponents.Stepper and head.top.getPercentage() > 0):
                     listMultiplePaths.append(head.top)
             if (head.right is not None):
-                if (type(head.right) is Valves.Solenoid and head.right.getState()):
+                if (type(head.right) is DiagramComponents.Solenoid and head.right.getState()):
                     listMultiplePaths.append(head.right)
-                elif (type(head.right) is not Valves.Solenoid and type(head.right) is not Valves.Stepper):
+                elif (type(head.right) is not DiagramComponents.Solenoid and type(head.right) is not DiagramComponents.Stepper):
                     listMultiplePaths.append(head.right)
-                elif (type(head.right) is Valves.Stepper and head.right.getPercentage() > 0):
+                elif (type(head.right) is DiagramComponents.Stepper and head.right.getPercentage() > 0):
                     listMultiplePaths.append(head.right)
             if (head.bottom is not None):
-                if (type(head.bottom) is Valves.Solenoid and head.bottom.getState()):
+                if (type(head.bottom) is DiagramComponents.Solenoid and head.bottom.getState()):
                     listMultiplePaths.append(head.bottom)
-                elif (type(head.bottom) is not Valves.Solenoid and type(head.bottom) is not Valves.Stepper):
+                elif (type(head.bottom) is not DiagramComponents.Solenoid and type(head.bottom) is not DiagramComponents.Stepper):
                     listMultiplePaths.append(head.bottom)
-                elif (type(head.bottom) is Valves.Stepper and head.bottom.getPercentage() > 0):
+                elif (type(head.bottom) is DiagramComponents.Stepper and head.bottom.getPercentage() > 0):
                     listMultiplePaths.append(head.bottom)
             if (head.left is not None):
-                if (type(head.left) is Valves.Solenoid and head.left.getState()):
+                if (type(head.left) is DiagramComponents.Solenoid and head.left.getState()):
                     listMultiplePaths.append(head.left)
-                elif (type(head.left) is not Valves.Solenoid and type(head.left) is not Valves.Stepper):
+                elif (type(head.left) is not DiagramComponents.Solenoid and type(head.left) is not DiagramComponents.Stepper):
                     listMultiplePaths.append(head.left)
-                elif (type(head.left) is Valves.Stepper and head.left.getPercentage() > 0):
+                elif (type(head.left) is DiagramComponents.Stepper and head.left.getPercentage() > 0):
                     listMultiplePaths.append(head.left)
 
             listMultiplePaths.pop(0)
@@ -346,8 +333,6 @@ class Liquid_Engine_Plumbing:
             self.ps3.setFill(False, True, True, True)
             self.tp1.setFill(True, False, False, False)
 
-
-
     def getWindow(self):
         return self.win
 
@@ -372,19 +357,19 @@ class Solids_Engine_Plumbing:
         self.header.getWidget().place(x=gridLen * 0, y=gridLen * 0)
 
         # All TANKS
-        self.gn2 = Tank.Tank(self.win, 'black', 'GN2', '#1d2396', gridLen, gridLen)
-        self.ovp = Tank.Tank(self.win, 'black', 'Over\nPres', '#f542b9', gridLen, gridLen)
+        self.gn2 = DiagramComponents.Tank(self.win, 'black', 'GN2', '#1d2396', gridLen, gridLen)
+        self.ovp = DiagramComponents.Tank(self.win, 'black', 'Over\nPres', '#f542b9', gridLen, gridLen)
         self.gn2.getWidget().place(x=gridLen * 0, y=gridLen * 1)
         self.ovp.getWidget().place(x=gridLen * 2, y=gridLen * 1)
 
         # All SOLENOID VALVES
-        self.one = Valves.Solenoid(self.win, 'black', 1, gridLen, gridLen, True, False, True, False, fluidColor)
-        self.two = Valves.Solenoid(self.win, 'black', 1, gridLen, gridLen, True, False, True, False, fluidColor)
+        self.one = DiagramComponents.Solenoid(self.win, 'black', 1, gridLen, gridLen, True, False, True, False, fluidColor)
+        self.two = DiagramComponents.Solenoid(self.win, 'black', 1, gridLen, gridLen, True, False, True, False, fluidColor)
         self.one.getWidget().place(x=gridLen * 0, y=gridLen * 2)
         self.two.getWidget().place(x=gridLen * 2, y=gridLen * 2)
 
         # All Pressure Sensors
-        self.ps1 = Valves.PressureSensor(self.win, 'black', gridLen, gridLen, False, False, False, True, '#41d94d', False, False, False, False)
+        self.ps1 = DiagramComponents.PressureSensor(self.win, 'black', gridLen, gridLen, False, False, False, True, '#41d94d', False, False, False, False)
         self.ps1.getWidget().place(x=gridLen * 2, y=gridLen * 4)
 
         # All Text boxes
@@ -396,10 +381,10 @@ class Solids_Engine_Plumbing:
         self.t3.getWidget().place(x=gridLen * 2, y=gridLen * 6)
 
         # All PIPES
-        self.p1 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, True, False, False, '#41d94d', False)
-        self.p2 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, False, True, True, True, '#41d94d', False)
-        self.p3 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, False, False, True, '#41d94d', False)
-        self.p4 = Pipes.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, True, '#41d94d', False)
+        self.p1 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, True, False, False, '#41d94d', False)
+        self.p2 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, False, True, True, True, '#41d94d', False)
+        self.p3 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, False, False, True, '#41d94d', False)
+        self.p4 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, True, True, True, '#41d94d', False)
         self.p1.getWidget().place(x=gridLen * 0, y=gridLen * 3)
         self.p2.getWidget().place(x=gridLen * 1, y=gridLen * 3)
         self.p3.getWidget().place(x=gridLen * 2, y=gridLen * 3)
@@ -407,7 +392,7 @@ class Solids_Engine_Plumbing:
 
 
         # NOZZLE
-        self.n = Nozzle.Nozzle(self.win, 'black', gridLen, gridLen * 1.5)
+        self.n = DiagramComponents.Nozzle(self.win, 'black', gridLen, gridLen * 1.5)
         self.n.getWidget().place(x=gridLen * 1, y=gridLen * 5)
 
 
