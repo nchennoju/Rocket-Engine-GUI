@@ -13,6 +13,6 @@ The following code on this repository has been designed to control the SDR Liqui
 - Have Pre-programmed actions to execute (i.e. Startup)
 
 ## GUI Layout
-![GUI 3.0](https://github.com/nchennoju/Sun-Devil-Rocketry---SwitchBox/blob/master/SDR_GUI/img/engineTelemetry.gif)
+![GUI 3.0](https://github.com/nchennoju/Rocket-Engine-GUI/blob/master/img/v8c.gif)
 
 **Arduino Boards required for com port auto detection. If arduino is not connected, GUI will not allow actuation.
