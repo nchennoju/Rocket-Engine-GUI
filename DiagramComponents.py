@@ -5,10 +5,17 @@ from tkinter import *
 #import time
 #import tkinter as tk
 
+"""
+The following parent class Component is used by several child classes for code readability and
+reusability. The Component class works by taking in the basic parameters of the tkinter frame,
+background color, width and height of the local canvas, 4 input parameters indicating which sides
+of the components have pipes and the color of the fluid.
+"""
+
 class Component:
     # The following class has been defined to be inherited by the different P&ID components
     # as many P&ID components share several attributes (excluding the nozzle, tank, and pipes)
-    def __init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluidColor):
+    def __init__(self, root, background, width, height, line_1, line_2, line_3, line_4, **kwargs):
         self.c = Canvas(root, width=width, height=height, bg=background, highlightthickness=0)
         self.width = width
         self.height = height
@@ -17,7 +24,7 @@ class Component:
         self.line_2 = line_2
         self.line_3 = line_3
         self.line_4 = line_4
-        self.fluidColor = fluidColor
+
         self.top = None
         self.right = None
         self.bottom = None
@@ -27,6 +34,7 @@ class Component:
         self.fill3 = False
         self.fill4 = False
 
+        self.fluidColor = kwargs.get('fluid_color', '#41d94d')
 
         # DRAW PIPES
         if (line_1):
@@ -109,8 +117,8 @@ class Component:
 
 
 class Solenoid(Component):
-    def __init__(self, root, background, num, width, height, line_1, line_2, line_3, line_4, fluidColor):
-        Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluidColor)
+    def __init__(self, root, background, num, width, height, line_1, line_2, line_3, line_4, **kwargs):
+        Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluid_color=kwargs.get('fluid_color', '#41d94d'))
         self.inlet = -1
         self.outlet = -1
 
@@ -178,9 +186,9 @@ class Solenoid(Component):
                     self.c.itemconfig(self.f3, fill='black')
             if (self.outlet == 4):
                 if (inlet):
-                    self.c.itemconfig(self.f3, fill=self.fluidColor)
+                    self.c.itemconfig(self.f4, fill=self.fluidColor)
                 else:
-                    self.c.itemconfig(self.f3, fill='black')
+                    self.c.itemconfig(self.f4, fill='black')
         else:
             self.state = False
             self.c.itemconfig(self.fill, fill = '#ab1f1f')
@@ -198,8 +206,8 @@ class Solenoid(Component):
 
 class Stepper(Component):
 
-    def __init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluidColor):
-        Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluidColor)
+    def __init__(self, root, background, width, height, line_1, line_2, line_3, line_4, **kwargs):
+        Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluid_color=kwargs.get('fluid_color', '#41d94d'))
 
         self.fill = self.c.create_rectangle((width/4.0), (height/4.0), (width*(3/4.0)), (height*(3/4.0)), fill='#ab1f1f')
         self.fillGreen = self.c.create_rectangle((width / 4.0), (height / 4.0), (width / 4.0), (height * (3 / 4.0)), fill='#41d94d')
@@ -221,9 +229,9 @@ class Stepper(Component):
 
 class Orifice(Component):
 
-    def __init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluidColor):
+    def __init__(self, root, background, width, height, line_1, line_2, line_3, line_4, **kwargs):
 
-        Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluidColor)
+        Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluid_color=kwargs.get('fluid_color', '#41d94d'))
 
         self.state = False
 
@@ -269,9 +277,9 @@ class Orifice(Component):
 
 class PressureSensor(Component):
 
-    def __init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluidColor):
+    def __init__(self, root, background, width, height, line_1, line_2, line_3, line_4, **kwargs):
 
-        Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluidColor)
+        Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluid_color=kwargs.get('fluid_color', '#41d94d'))
 
         self.state = False
 
@@ -317,9 +325,9 @@ class PressureSensor(Component):
 
 class TempSensor(Component):
 
-    def __init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluidColor):
+    def __init__(self, root, background, width, height, line_1, line_2, line_3, line_4, **kwargs):
 
-        Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluidColor)
+        Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluid_color=kwargs.get('fluid_color', '#41d94d'))
 
         self.state = False
 
@@ -447,6 +455,7 @@ class Pipe:
 
         self.state = False
         self.fluidColor = fluidColor
+
 
         # DRAW PIPES
         if (fill):
@@ -612,16 +621,16 @@ class Nozzle:
 #TEST CODE
 """win = tk.Tk()
 win.title("ELEMENT TEST")
-win.geometry("250x875")
+win.geometry("250x1000")
 win.configure(bg='black')
 
-s = Solenoid(win, 'black', 1, 125, 125, True, True, True, True, '#41d94d')
+s = Solenoid(win, 'black', 1, 125, 125, True, True, True, True)
 s.getWidget().pack(side='top')
-st = Stepper(win, 'black', 125, 125, True, True, True, True, '#41d94d')
+st = Stepper(win, 'black', 125, 125, True, True, True, True)
 st.getWidget().pack(side='top')
-o = PressureSensor(win, 'black', 125, 125, True, True, True, True, '#41d94d')
+o = PressureSensor(win, 'black', 125, 125, True, True, True, True)
 o.getWidget().pack(side='top')
-comp = Solenoid(win, 'black', 1, 125, 125, True, True, True, True, '#41d94d')
+comp = Solenoid(win, 'black', 1, 125, 125, True, True, True, True)
 comp.getWidget().pack(side="top")
 t = Tank(win, 'black', 'BOOM', '#1d2396', 125, 125)
 t.getWidget().pack(side='top')
