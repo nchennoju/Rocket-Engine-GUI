@@ -21,6 +21,9 @@ class Text:
         self.width = width
         self.height = height
 
+        self.rect = self.c.create_rectangle(0, 0, width-1, height-1,
+                                            outline='white')
+
         self.c.create_text(width / 2.0, height / 2.0, font=("Arial", size, ''), fill="white", text=text)
 
     def getWidget(self):

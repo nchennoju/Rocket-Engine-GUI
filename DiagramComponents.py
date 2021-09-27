@@ -2,8 +2,8 @@
 from tkinter import *
 
 #UNCOMMENT IF TESTING
-#import time
-#import tkinter as tk
+import time
+import tkinter as tk
 
 """
 The following parent class Component is used by several child classes for code readability and
@@ -35,6 +35,8 @@ class Component:
         self.fill4 = False
 
         self.fluidColor = kwargs.get('fluid_color', '#41d94d')
+
+        self.state = False
 
         # DRAW PIPES
         if (line_1):
@@ -113,6 +115,9 @@ class Component:
     def getWidget(self):
         return self.c
 
+    def getState(self):
+        return self.state
+
 
 
 
@@ -121,8 +126,6 @@ class Solenoid(Component):
         Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluid_color=kwargs.get('fluid_color', '#41d94d'))
         self.inlet = -1
         self.outlet = -1
-
-        self.state = False
 
         self.fill = self.c.create_rectangle((width / 4.0), (height / 4.0), (width * (3 / 4.0)), (height * (3 / 4.0)),
                                             fill='#ab1f1f')
@@ -136,8 +139,6 @@ class Solenoid(Component):
     def setOut(self, num):
         self.outlet = num
 
-    def getState(self):
-        return self.state
 
     def setState(self, open):
         inlet = False
@@ -224,6 +225,9 @@ class Stepper(Component):
     def getPercentage(self):
         return self.per
 
+    def getState(self):
+        return (self.per > 0)
+
 
 
 
@@ -232,8 +236,6 @@ class Orifice(Component):
     def __init__(self, root, background, width, height, line_1, line_2, line_3, line_4, **kwargs):
 
         Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluid_color=kwargs.get('fluid_color', '#41d94d'))
-
-        self.state = False
 
         self.rect = self.c.create_rectangle(width/4.0, height/4.0, width*(3/4.0), height*(3/4.0), outline='white')
         self.c.create_line((width / 4.0, height / 2.0), (3 * width / 4.0, height / 2.0), width=1, fill='white')
@@ -265,9 +267,6 @@ class Orifice(Component):
             if (self.line_4):
                 self.c.itemconfig(self.f4, fill='black')
 
-    def getState(self):
-        return self.state
-
     def setValues(self, before, after):
         self.c.itemconfig(self.beforeP, text='B: ' + before + ' Pa')
         self.c.itemconfig(self.afterP, text='A: ' + after + ' Pa')
@@ -281,17 +280,12 @@ class PressureSensor(Component):
 
         Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluid_color=kwargs.get('fluid_color', '#41d94d'))
 
-        self.state = False
-
         self.rect = self.c.create_oval(width / 4.0, height / 4.0, width * (3 / 4.0), height * (3 / 4.0),
                                             outline='white', width=1)
         self.p = self.c.create_text(width / 2.0, height / 2.0, font=("Arial", 8, 'bold'), fill="white",
                                              text="__ Pa")
         self.name = self.c.create_text(width/4.0, height/8.0, font=("Arial", 6, 'bold'), fill="white",
                                          text="Pressure\nSensor")
-
-    def getWidget(self):
-        return self.c
 
     def setPipes(self, state):
         self.state = state
@@ -314,9 +308,6 @@ class PressureSensor(Component):
             if (self.line_4):
                 self.c.itemconfig(self.f4, fill='black')
 
-    def getState(self):
-        return self.state
-
     def setValues(self, pressure):
         self.c.itemconfig(self.p, text=pressure)
 
@@ -328,8 +319,6 @@ class TempSensor(Component):
     def __init__(self, root, background, width, height, line_1, line_2, line_3, line_4, **kwargs):
 
         Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluid_color=kwargs.get('fluid_color', '#41d94d'))
-
-        self.state = False
 
         self.rect = self.c.create_oval(width / 4.0, height / 4.0, width * (3 / 4.0), height * (3 / 4.0),
                                             outline='white', width=1)
@@ -359,13 +348,119 @@ class TempSensor(Component):
             if (self.line_4):
                 self.c.itemconfig(self.f4, fill='black')
 
-    def getState(self):
-        return self.state
-
     def setValues(self, pressure):
         self.c.itemconfig(self.p, text=pressure)
 
+class CheckValve(Component):
+    def __init__(self, root, background, num, width, height, **kwargs):
 
+        xy = []
+        line_1, line_2, line_3, line_4 = False, False, False, False
+        if (num == 1):
+            xy = [(13 * width / 16.0, 13 * height / 16.0), (3 * width / 16.0, 3 * height / 16.0)]
+            line_1, line_2, line_3, line_4 = True, False, True, False
+        elif (num == 2):
+            xy = [(3 * width / 16.0, 13 * height / 16.0), (13 * width / 16.0, 3 * height / 16.0)]
+            line_1, line_2, line_3, line_4 = False, True, False, True
+        elif (num == 3):
+            xy = [(3 * width / 16.0, 3 * height / 16.0), (13 * width / 16.0, 13 * height / 16.0)]
+            line_1, line_2, line_3, line_4 = True, False, True, False
+        elif (num == 4):
+            xy = [(13 * width / 16.0, 3 * height / 16.0), (3 * width / 16.0, 13 * height / 16.0)]
+            line_1, line_2, line_3, line_4 = False, True, False, True
+
+        Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluid_color=kwargs.get('fluid_color', '#41d94d'))
+        self.inlet = -1
+        self.outlet = -1
+
+        self.fill = self.c.create_rectangle((width / 4.0), (height / 4.0), (width * (3 / 4.0)), (height * (3 / 4.0)),
+                                            fill='#000')
+        self.rect = self.c.create_rectangle(width / 4.0, height / 4.0, width * (3 / 4.0), height * (3 / 4.0),
+                                            outline='white')
+
+
+
+
+        self.c.create_line(xy, width=1, fill='white', arrow=tk.LAST)
+
+
+    def setIn(self, num):
+        self.inlet = num
+
+    def setOut(self, num):
+        self.outlet = num
+
+    def update(self):
+        neighbors = [self.top, self.right, self.bottom, self.left]
+        if(neighbors[self.outlet - 1].getState() and not neighbors[self.inlet - 1].getState()):
+            self.state = False
+
+
+
+
+class PressureReg(Component):
+    def __init__(self, root, background, num, width, height, **kwargs):
+
+        if (num%2 == 0):
+            line_1, line_2, line_3, line_4 = False, True, False, True
+        else:
+            line_1, line_2, line_3, line_4 = True, False, True, False
+
+        Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluid_color=kwargs.get('fluid_color', '#41d94d'))
+        self.inlet = -1
+        self.outlet = -1
+
+
+        if(num % 2 == 0):
+            self.shape = self.c.create_polygon(
+                [width / 4.0, 3 * height / 8.0, width / 4.0, 5 * height / 8.0, 3 * width / 4.0, 3 * height / 8.0,
+                 3 * width / 4.0, 5 * height / 8.0], outline='white')
+            self.dome = self.c.create_arc(3 * width / 8.0, height / 4.0, 5 * width / 8.0, height / 2.0, start=0,
+                                          extent=180, outline="white")
+            self.lin = self.c.create_line(
+                [width / 2.0, 3 * height / 8.0, width / 2.0, height / 2, 3 * width / 4.0, height / 4.0, 3 * width / 4.0,
+                 height / 8.0, width / 2.0, height / 8.0, width / 2.0, height / 4.0], fill='white')
+        else:
+            self.shape = self.c.create_polygon(
+                [3 * width / 8.0, height / 4.0, 5 * width / 8.0, height / 4.0, 3 * width / 8.0, 3 * height / 4.0,
+                 5 * width / 8.0, 3 * height / 4.0], outline='white')
+            self.dome = self.c.create_arc(width / 4.0, 3 * height / 8.0, width / 2.0, 5 * height / 8.0, start=90,
+                                          extent=180, outline="white")
+            self.lin = self.c.create_line(
+                [3 * width / 8.0, height / 2.0, width / 2, height / 2.0, width / 4.0, 3 * height / 4.0,
+                 width / 8.0, 3 * height / 4.0, width / 8.0, height / 2.0, width / 4.0, height / 2.0], fill='white')
+
+class ReliefValve(Component):
+    def __init__(self, root, background, num, width, height, **kwargs):
+
+        if (num%2 == 0):
+            line_1, line_2, line_3, line_4 = False, True, False, True
+        else:
+            line_1, line_2, line_3, line_4 = True, False, True, False
+
+        Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluid_color=kwargs.get('fluid_color', '#41d94d'))
+        self.inlet = -1
+        self.outlet = -1
+
+
+        if(num % 2 == 0):
+            self.shape = self.c.create_polygon(
+                [width / 4.0, 3 * height / 8.0, width / 4.0, 5 * height / 8.0, 3 * width / 4.0, 3 * height / 8.0,
+                 3 * width / 4.0, 5 * height / 8.0], outline='white')
+            self.dome = self.c.create_arc(3 * width / 8.0, height / 4.0, 5 * width / 8.0, height / 2.0, start=0,
+                                          extent=180, outline="white")
+            self.lin = self.c.create_line(
+                [width / 2.0, 3 * height / 8.0, width / 2.0, height / 2, 3 * width / 4.0, height / 4.0, 3 * width / 4.0,
+                 height / 8.0, width / 2.0, height / 8.0, width / 2.0, height / 4.0], fill='white')
+        else:
+            self.shape = self.c.create_polygon(
+                [3 * width / 8.0, height / 4.0, 5 * width / 8.0, height / 4.0, 3 * width / 8.0, 3 * height / 4.0,
+                 5 * width / 8.0, 3 * height / 4.0], outline='white')
+            self.dome = self.c.create_arc(width / 4.0, 3 * height / 8.0, width / 2.0, 5 * height / 8.0, start=90,
+                                          extent=180, outline="white")
+            self.lin = self.c.create_line(
+                [3 * width / 8.0, height / 2.0, width / 2, height / 2.0, width / 4.0, 3 * height / 4.0,
+                 width / 8.0, 3 * height / 4.0, width / 8.0, height / 2.0, width / 4.0, height / 2.0], fill='white')
 
 
 class Tank:
@@ -596,7 +691,7 @@ class Nozzle:
         self.plot.append((0.1 * width, height * 0.7))
         self.plot.append((0.1 * width, height * 0.1))
         self.plot.append((1, height * 0.1))
-
+        
         self.base = self.c.create_polygon(self.plot, outline='white')
 
         self.thrust = self.c.create_text(width/2.0, (height/2.0) - padding, font=("Arial", 10), fill="white", text='thrust')
@@ -624,7 +719,7 @@ win.title("ELEMENT TEST")
 win.geometry("250x1000")
 win.configure(bg='black')
 
-s = Solenoid(win, 'black', 1, 125, 125, True, True, True, True)
+s = PressureReg(win, 'black', 1, 125, 125)
 s.getWidget().pack(side='top')
 st = Stepper(win, 'black', 125, 125, True, True, True, True)
 st.getWidget().pack(side='top')
@@ -634,16 +729,18 @@ comp = Solenoid(win, 'black', 1, 125, 125, True, True, True, True)
 comp.getWidget().pack(side="top")
 t = Tank(win, 'black', 'BOOM', '#1d2396', 125, 125)
 t.getWidget().pack(side='top')
-p = Pipe(win, 'black', 125, 125, True, True, True, True, '#41d94d', True)
-p.getWidget().pack(side='top')
+p = Pipe(win, 'black', 125, 125, False, True, False, True, '#41d94d', True)
+p.getWidget().place(x=62.5, y=125 * 6)
+p2 = Pipe(win, 'black', 125, 125, True, False, True, False, '#41d94d', True)
+p2.getWidget().place(x=62.5, y=125 * 6)
 n = Nozzle(win, 'black', 125, 125)
 n.getWidget().pack(side='top')
 
 while True:
-    s.setState(True)
+    #s.setState(True)
     win.update()
     time.sleep(1)
-    s.setState(False)
+    #s.setState(False)
     win.update()
     time.sleep(1)
     for i in range(101):
