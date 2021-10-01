@@ -402,16 +402,16 @@ class PressureReg(Component):
     def __init__(self, root, background, num, width, height, **kwargs):
 
         if (num%2 == 0):
-            line_1, line_2, line_3, line_4 = False, True, False, True
-        else:
             line_1, line_2, line_3, line_4 = True, False, True, False
+        else:
+            line_1, line_2, line_3, line_4 = False, True, False, True
 
         Component.__init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluid_color=kwargs.get('fluid_color', '#41d94d'))
         self.inlet = -1
         self.outlet = -1
 
 
-        if(num % 2 == 0):
+        if(num == 1):
             self.shape = self.c.create_polygon(
                 [width / 4.0, 3 * height / 8.0, width / 4.0, 5 * height / 8.0, 3 * width / 4.0, 3 * height / 8.0,
                  3 * width / 4.0, 5 * height / 8.0], outline='white')
@@ -420,7 +420,7 @@ class PressureReg(Component):
             self.lin = self.c.create_line(
                 [width / 2.0, 3 * height / 8.0, width / 2.0, height / 2, 3 * width / 4.0, height / 4.0, 3 * width / 4.0,
                  height / 8.0, width / 2.0, height / 8.0, width / 2.0, height / 4.0], fill='white')
-        else:
+        elif(num == 2):
             self.shape = self.c.create_polygon(
                 [3 * width / 8.0, height / 4.0, 5 * width / 8.0, height / 4.0, 3 * width / 8.0, 3 * height / 4.0,
                  5 * width / 8.0, 3 * height / 4.0], outline='white')
@@ -429,6 +429,25 @@ class PressureReg(Component):
             self.lin = self.c.create_line(
                 [3 * width / 8.0, height / 2.0, width / 2, height / 2.0, width / 4.0, 3 * height / 4.0,
                  width / 8.0, 3 * height / 4.0, width / 8.0, height / 2.0, width / 4.0, height / 2.0], fill='white')
+        elif(num == 3):
+            self.shape = self.c.create_polygon(
+                [width / 4.0, 3 * height / 8.0, width / 4.0, 5 * height / 8.0, 3 * width / 4.0, 3 * height / 8.0,
+                 3 * width / 4.0, 5 * height / 8.0], outline='white')
+            self.dome = self.c.create_arc(3 * width / 8.0, 3 * height / 4.0, 5 * width / 8.0, height / 2.0, start=180,
+                                          extent=180, outline="white")
+            self.lin = self.c.create_line(
+                [width / 2.0, 5 * height / 8.0, width / 2.0, height / 2, 3 * width / 4.0, 3 * height / 4.0, 3 * width / 4.0,
+                 7 * height / 8.0, width / 2.0, 7 * height / 8.0, width / 2.0, 3 * height / 4.0], fill='white')
+        elif(num == 4):
+            self.shape = self.c.create_polygon(
+                [3 * width / 8.0, height / 4.0, 5 * width / 8.0, height / 4.0, 3 * width / 8.0, 3 * height / 4.0,
+                 5 * width / 8.0, 3 * height / 4.0], outline='white')
+            self.dome = self.c.create_arc(3 * width / 4.0, 3 * height / 8.0, width / 2.0, 5 * height / 8.0, start=270,
+                                          extent=180, outline="white")
+            self.lin = self.c.create_line(
+                [5 * width / 8.0, height / 2.0, width / 2, height / 2.0, 3 * width / 4.0, 3 * height / 4.0,
+                 7 * width / 8.0, 3 * height / 4.0, 7 * width / 8.0, height / 2.0, 3 * width / 4.0, height / 2.0], fill='white')
+
 
 class ReliefValve(Component):
     def __init__(self, root, background, num, width, height, **kwargs):
@@ -535,6 +554,7 @@ class Pipe:
 
     def __init__(self, root, background, width, height, line_1, line_2, line_3, line_4, fluidColor, fill):
         self.c = Canvas(root, width=width, height=height, bg=background, highlightthickness=0)
+
         self.width = width
         self.height = height
 
@@ -663,6 +683,98 @@ class Pipe:
 
 
 
+class PipeIntersect:
+
+    def __init__(self, root, background, width, height, fluidColor, fill1, fill2):
+        self.c = Canvas(root, width=width, height=height, bg=background, highlightthickness=0)
+
+        self.width = width
+        self.height = height
+
+        self.top = None
+        self.right = None
+        self.bottom = None
+        self.left = None
+
+        self.state = False
+        self.fluidColor = fluidColor
+
+
+        # DRAW PIPES
+        if (fill1):
+            self.f0 = self.c.create_rectangle(7 * width / 16.0, 7 * height / 16.0, 9 * width / 16.0, 9 * height / 16.0,
+                                              fill=fluidColor)
+        else:
+            self.f0 = self.c.create_rectangle(7 * width / 16.0, 7 * height / 16.0, 9 * width / 16.0, 9 * height / 16.0,
+                                              fill='black')
+
+        xy = [(7 * width / 16.0, 0), (7 * width / 16.0, height)]
+        self.c.create_line(xy, width=1, fill='white')
+        xy2 = [(9 * width / 16.0, 0), (9 * width / 16.0, height)]
+        self.c.create_line(xy2, width=1, fill='white')
+        xy = [(0, 7 * height / 16.0), (7 * width / 16, 7 * height / 16)]
+        self.c.create_line(xy, width=1, fill='white')
+        xy2 = [(0, 9 * height / 16.0), (7 * width / 16, 9 * height / 16)]
+        self.c.create_line(xy2, width=1, fill='white')
+        xy = [(9 * width / 16, 7 * height / 16.0), (width, 7 * height / 16)]
+        self.c.create_line(xy, width=1, fill='white')
+        xy2 = [(9 * width / 16, 9 * height / 16.0), (width, 9 * height / 16)]
+        self.c.create_line(xy2, width=1, fill='white')
+
+        self.f1 = self.c.create_rectangle((7 * width / 16.0) + 1, 0, (9 * width / 16.0),
+                                          height - 1,
+                                          fill="black", outline="")
+        if(fill1):
+            self.c.itemconfig(self.f1, fill=fluidColor)
+        self.f2a = self.c.create_rectangle(0, (7 * height / 16.0) + 1, (7 * width / 16.0) - 1,
+                                          9 * height / 16.0,
+                                          fill="black", outline="")
+        self.f2b = self.c.create_rectangle((9 * width / 16.0) + 2, (7 * height / 16.0) + 1, width,
+                                          9 * height / 16.0,
+                                          fill="black", outline="")
+        if(fill2):
+            self.c.itemconfig(self.f2a, fill=fluidColor)
+            self.c.itemconfig(self.f2b, fill=fluidColor)
+
+
+    def setNeighbors(self, top, right, bottom, left):
+        # function used to populate map to establish relations between this pipe and components around it
+        self.top = top
+        self.right = right
+        self.bottom = bottom
+        self.left = left
+
+    def setState(self, fluid):
+        self.state = fluid
+        if (fluid):
+            self.c.itemconfig(self.f0, fill=self.fluidColor)
+            if (self.line1):
+                self.c.itemconfig(self.f1, fill=self.fluidColor)
+            if (self.line2):
+                self.c.itemconfig(self.f2, fill=self.fluidColor)
+            if (self.line3):
+                self.c.itemconfig(self.f3, fill=self.fluidColor)
+            if (self.line4):
+                self.c.itemconfig(self.f4, fill=self.fluidColor)
+        else:
+            self.c.itemconfig(self.f0, fill='black')
+            if (self.line1):
+                self.c.itemconfig(self.f1, fill='black')
+            if (self.line2):
+                self.c.itemconfig(self.f2, fill='black')
+            if (self.line3):
+                self.c.itemconfig(self.f3, fill='black')
+            if (self.line4):
+                self.c.itemconfig(self.f4, fill='black')
+
+    def getState(self):
+        return self.state
+
+    def getWidget(self):
+        return self.c
+
+
+
 
 class Nozzle:
 
@@ -731,7 +843,7 @@ t = Tank(win, 'black', 'BOOM', '#1d2396', 125, 125)
 t.getWidget().pack(side='top')
 p = Pipe(win, 'black', 125, 125, False, True, False, True, '#41d94d', True)
 p.getWidget().place(x=62.5, y=125 * 6)
-p2 = Pipe(win, 'black', 125, 125, True, False, True, False, '#41d94d', True)
+p2 = PipeIntersect(win, 'black', 125, 125, '#41d94d', False, False)
 p2.getWidget().place(x=62.5, y=125 * 6)
 n = Nozzle(win, 'black', 125, 125)
 n.getWidget().pack(side='top')

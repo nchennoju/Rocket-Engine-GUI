@@ -13,6 +13,7 @@ class UCI_Liquid_Engine_Plumbing:
         self.win.title("P&ID Diagram")
         self.win.geometry(str(width) + "x" + str(height))
         self.win.configure(bg='black')
+        #self.win.wm_attributes('-transparentcolor', 'black')
 
         # CONSTANT
         fluidColor = '#41d94d'
@@ -158,6 +159,7 @@ class UCI_Liquid_Engine_Plumbing:
                                           False)
         self.p36 = DiagramComponents.Pipe(self.win, 'black', gridLen, gridLen, True, True, False, True, '#41d94d',
                                           False)
+        self.ip1 = DiagramComponents.PipeIntersect(self.win, 'black', gridLen, gridLen, '#41d94d', False, False)
 
         self.p1.getWidget().place(x=gridLen * 7, y=gridLen * 2)
         self.p2.getWidget().place(x=gridLen * 8, y=gridLen * 2)
@@ -216,13 +218,13 @@ class UCI_Liquid_Engine_Plumbing:
 
 
         # ALL Regs
-        self.reg1 = DiagramComponents.PressureReg(self.win, 'black', 2, gridLen, gridLen)
-        self.reg2 = DiagramComponents.PressureReg(self.win, 'black', 2, gridLen, gridLen)
-        self.reg3 = DiagramComponents.PressureReg(self.win, 'black', 1, gridLen, gridLen)
-        self.reg4 = DiagramComponents.PressureReg(self.win, 'black', 1, gridLen, gridLen)
-        self.reg5 = DiagramComponents.PressureReg(self.win, 'black', 1, gridLen, gridLen)
-        self.reg6 = DiagramComponents.PressureReg(self.win, 'black', 2, gridLen, gridLen)
-        self.reg7 = DiagramComponents.PressureReg(self.win, 'black', 2, gridLen, gridLen)
+        self.reg1 = DiagramComponents.PressureReg(self.win, 'black', 1, gridLen, gridLen)
+        self.reg2 = DiagramComponents.PressureReg(self.win, 'black', 3, gridLen, gridLen)
+        self.reg3 = DiagramComponents.PressureReg(self.win, 'black', 2, gridLen, gridLen)
+        self.reg4 = DiagramComponents.PressureReg(self.win, 'black', 2, gridLen, gridLen)
+        self.reg5 = DiagramComponents.PressureReg(self.win, 'black', 4, gridLen, gridLen)
+        self.reg6 = DiagramComponents.PressureReg(self.win, 'black', 1, gridLen, gridLen)
+        self.reg7 = DiagramComponents.PressureReg(self.win, 'black', 1, gridLen, gridLen)
         self.reg1.getWidget().place(x=gridLen * 4, y=gridLen * 3)
         self.reg2.getWidget().place(x=gridLen * 9, y=gridLen * 3)
         self.reg3.getWidget().place(x=gridLen * 8, y=gridLen * 4)
@@ -230,6 +232,9 @@ class UCI_Liquid_Engine_Plumbing:
         self.reg5.getWidget().place(x=gridLen * 11, y=gridLen * 7)
         self.reg6.getWidget().place(x=gridLen * 4, y=gridLen * 11)
         self.reg7.getWidget().place(x=gridLen * 4, y=gridLen * 12)
+
+        # intersecting pipes
+        self.ip1.getWidget().place(x=gridLen * 8, y=gridLen * 12)
 
 
         # ALL TEXT
