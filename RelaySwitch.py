@@ -108,6 +108,42 @@ class Buttons:
         return self.switch
 
 
+class Checklist:
+
+    def __init__(self, root, name, width, symbol):
+        self.symbol = symbol
+
+        self.name = name
+
+        self.switch = tk.Frame(root)
+        self.state = 0
+        self.button = tk.Button(self.switch, text=name, width = width, command=self.action, bg='#ed3b3b', fg='white',
+                                    activebackground='#d42f2f', activeforeground='white')
+        self.button.pack()
+        self.switch.pack(side='left', padx=4 * pad, pady=2 * pad)
+        #self.switch.pack(pady=pad)
+
+    def setState(self, state):
+        if(state):
+            self.button.config(bg="#41d94d")
+            self.symbol.setState(True)
+        else:
+            self.button.config(bg="#ed3b3b")
+            self.symbol.setState(False)
+
+    def getFrame(self):
+        return self.switch
+
+    def action(self):
+        print("actuated")
+        self.state = not self.state
+        self.setState(self.state)
+        if(self.state):
+            print(self.name + " (ACTUATED)")
+        else:
+            print(self.name + " (OFF)")
+
+
 class Switch:
 
     def __init__(self, root, name, pinNum, arduino):
@@ -135,3 +171,6 @@ class Switch:
             self.lR.config(bg="red")
         self.arduino.write(str.encode(str(serialNum)))
         print(str(serialNum))
+
+
+

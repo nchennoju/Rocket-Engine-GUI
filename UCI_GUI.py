@@ -186,34 +186,28 @@ if __name__ == '__main__':
     b = tk.Frame(root, bg='black')  # represents tow 2
     c = tk.Frame(root, bg='black')  # represents tow 3
     d = tk.Frame(root, bg='black')  # represents tow 4
-    e = tk.Frame(root, bg='black')  # represents tow 1
-    f = tk.Frame(root, bg='black')  # represents tow 2
-    g = tk.Frame(root, bg='black')  # represents tow 3
-    h = tk.Frame(root, bg='black')  # represents tow 4
-    switch1 = RelaySwitch.Buttons(a, 0, arduinoSwitchbox, "Relay 1", plumbing.one)
+    switch1 = RelaySwitch.Buttons(b, 0, arduinoSwitchbox, "Relay 1", plumbing.one)
     switch2 = RelaySwitch.Buttons(b, 1, arduinoSwitchbox, "Relay 2", plumbing.two)
     switch3 = RelaySwitch.Buttons(c, 2, arduinoSwitchbox, "Relay 3", plumbing.three)
-    switch4 = RelaySwitch.Buttons(d, 3, arduinoSwitchbox, "Relay 4", plumbing.four)
-    switch5 = RelaySwitch.Buttons(e, 4, arduinoSwitchbox, "Relay 5", plumbing.five)
-    switch6 = RelaySwitch.Buttons(f, 5, arduinoSwitchbox, "Relay 6", plumbing.six)
+    switch4 = RelaySwitch.Buttons(c, 3, arduinoSwitchbox, "Relay 4", plumbing.four)
+    switch5 = RelaySwitch.Buttons(d, 4, arduinoSwitchbox, "Relay 5", plumbing.five)
+    switch6 = RelaySwitch.Buttons(d, 5, arduinoSwitchbox, "Relay 6", plumbing.six)
 
-    switch7 = RelaySwitch.Buttons(a, 0, arduinoSwitchbox, "CHK 7", plumbing.seven)
-    switch8 = RelaySwitch.Buttons(b, 1, arduinoSwitchbox, "CHK 8", plumbing.eight)
-    switch9 = RelaySwitch.Buttons(c, 2, arduinoSwitchbox, "CHK 9", plumbing.nine)
-    switch10 = RelaySwitch.Buttons(d, 3, arduinoSwitchbox, "CHK 10", plumbing.ten)
-    switch11 = RelaySwitch.Buttons(e, 4, arduinoSwitchbox, "CHK 11", plumbing.eleven)
-    switch12 = RelaySwitch.Buttons(f, 5, arduinoSwitchbox, "CHK 12", plumbing.twelve)
-    switch13 = RelaySwitch.Buttons(g, 0, arduinoSwitchbox, "CHK 13", plumbing.thirteen)
-    switch14 = RelaySwitch.Buttons(h, 1, arduinoSwitchbox, "CHK 14", plumbing.fourteen)
+    switch7 = RelaySwitch.Checklist(a, "CHK 7", 6, plumbing.seven)
+    switch8 = RelaySwitch.Checklist(a, "CHK 8", 6, plumbing.eight)
+    switch9 = RelaySwitch.Checklist(a, "CHK 9", 6, plumbing.nine)
+    switch10 = RelaySwitch.Checklist(a, "CHK 10", 6, plumbing.ten)
+    switch11 = RelaySwitch.Checklist(a, "CHK 11", 6, plumbing.eleven)
+    switch12 = RelaySwitch.Checklist(a, "CHK 12", 6, plumbing.twelve)
+    switch13 = RelaySwitch.Checklist(a, "CHK 13", 6, plumbing.thirteen)
+    switch14 = RelaySwitch.Checklist(a, "CHK 14", 6, plumbing.fourteen)
+
     # attaches rows to root tkinter GUI
     a.pack()
     b.pack()
     c.pack()
     d.pack()
-    e.pack()
-    f.pack()
-    g.pack()
-    h.pack()
+
 
     g = tk.Frame(root)
     h = tk.Frame(root)

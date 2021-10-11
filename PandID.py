@@ -23,15 +23,15 @@ class UCI_Liquid_Engine_Plumbing:
         self.header.getWidget().place(x=gridLen * 0, y=gridLen * 0)
 
         # ALL TANKS
-        self.he1 = DiagramComponents.Tank(self.win, 'black', 'He F', '#1d2396', gridLen, gridLen)
-        self.he2 = DiagramComponents.Tank(self.win, 'black', 'He F', '#1d2396', gridLen, gridLen)
-        self.he3 = DiagramComponents.Tank(self.win, 'black', 'He F', '#1d2396', gridLen, gridLen)
-        self.n2 = DiagramComponents.Tank(self.win, 'black', 'N2', '#1d2396', gridLen, gridLen)
-        self.heCopv = DiagramComponents.Tank(self.win, 'black', 'He', '#1d2396', gridLen, gridLen)
+        self.he1 = DiagramComponents.Tank(self.win, 'black', 'He F', '#b30056', gridLen, gridLen)
+        self.he2 = DiagramComponents.Tank(self.win, 'black', 'He F', '#b30056', gridLen, gridLen)
+        self.he3 = DiagramComponents.Tank(self.win, 'black', 'He F', '#b30056', gridLen, gridLen)
+        self.n2 = DiagramComponents.Tank(self.win, 'black', 'N2', '#b30056', gridLen, gridLen)
+        self.heCopv = DiagramComponents.Tank(self.win, 'black', 'He', '#b30056', gridLen, gridLen)
         self.lowDewar = DiagramComponents.Tank(self.win, 'black', 'LOX D', '#1d2396', gridLen, gridLen)
         self.loxProp = DiagramComponents.Tank(self.win, 'black', 'LOX', '#1d2396', gridLen, gridLen)
-        self.lngDewar = DiagramComponents.Tank(self.win, 'black', 'LNG D', '#1d2396', gridLen, gridLen)
-        self.lngProp = DiagramComponents.Tank(self.win, 'black', 'LNG', '#1d2396', gridLen, gridLen)
+        self.lngDewar = DiagramComponents.Tank(self.win, 'black', 'LNG D', '#8a1900', gridLen, gridLen)
+        self.lngProp = DiagramComponents.Tank(self.win, 'black', 'LNG', '#8a1900', gridLen, gridLen)
         self.he1.getWidget().place(x=gridLen * 0, y=gridLen * 5)
         self.he2.getWidget().place(x=gridLen * 1, y=gridLen * 5)
         self.he3.getWidget().place(x=gridLen * 2, y=gridLen * 5)
@@ -56,7 +56,7 @@ class UCI_Liquid_Engine_Plumbing:
         self.eight = DiagramComponents.Solenoid(self.win, 'black', 8, gridLen, gridLen, False, True, False, True)
         self.nine = DiagramComponents.Solenoid(self.win, 'black', 9, gridLen, gridLen, False, True, False, True)
         self.ten = DiagramComponents.Solenoid(self.win, 'black', 10, gridLen, gridLen, False, True, False, True)
-        self.eleven = DiagramComponents.Solenoid(self.win, 'black', 11, gridLen, gridLen, False, True, False, False)
+        self.eleven = DiagramComponents.Solenoid(self.win, 'black', 11, gridLen, gridLen, False, True, False, True)
         self.twelve = DiagramComponents.Solenoid(self.win, 'black', 12, gridLen, gridLen, True, False, True, False)
         self.thirteen = DiagramComponents.Solenoid(self.win, 'black', 13, gridLen, gridLen, True, False, True, False)
         self.fourteen = DiagramComponents.Solenoid(self.win, 'black', 14, gridLen, gridLen, True, False, True, False)
@@ -245,6 +245,17 @@ class UCI_Liquid_Engine_Plumbing:
         # NOZZLE
         self.n = DiagramComponents.Nozzle(self.win, 'black', gridLen, gridLen * 1.5)
         self.n.getWidget().place(x=gridLen * 9, y=gridLen * 15)
+
+
+
+        # SET ALL VIRTUAL COMPONENTS (linked list)
+        self.head = [self.he1, self.he2, self.he3, self.n2, self.heCopv]
+        #row1
+        self.ps1.setNeighbors(None, None, self.p1, None)
+        self.heCopv.setNeighbors(None, None, self.p2, None)
+        #row2
+        self.ps2.setNeighbors(None, None, self.p7, None)
+        
 
     #def updatePipeStatus(self):
     #    print("AHHHHHHHH")
