@@ -737,12 +737,19 @@ class PipeIntersect:
             self.c.itemconfig(self.f2b, fill=fluidColor)
 
 
-    def setNeighbors(self, top, right, bottom, left):
+    def setNeighborsHorizontal(self, top, right, bottom, left):
         # function used to populate map to establish relations between this pipe and components around it
-        self.top = top
-        self.right = right
-        self.bottom = bottom
-        self.left = left
+        self.topH = top
+        self.rightH = right
+        self.bottomH = bottom
+        self.leftH = left
+
+    def setNeighborsVertical(self, top, right, bottom, left):
+        # function used to populate map to establish relations between this pipe and components around it
+        self.topV = top
+        self.rightV = right
+        self.bottomV = bottom
+        self.leftV = left
 
     def setState(self, fluid):
         self.state = fluid

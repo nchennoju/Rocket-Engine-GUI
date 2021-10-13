@@ -249,16 +249,170 @@ class UCI_Liquid_Engine_Plumbing:
 
 
         # SET ALL VIRTUAL COMPONENTS (linked list)
-        self.head = [self.he1, self.he2, self.he3, self.n2, self.heCopv]
+        self.head = [self.he1, self.he2, self.he3, self.n2]
         #row1
         self.ps1.setNeighbors(None, None, self.p1, None)
         self.heCopv.setNeighbors(None, None, self.p2, None)
         #row2
         self.ps2.setNeighbors(None, None, self.p7, None)
+        self.one.setNeighbors(None, self.p1, None, None)
+        self.p1.setNeighbors(self.ps1, self.p2, None, self.one)
+        self.p2.setNeighbors(self.heCopv, None, self.p8, self.p1)
+        #row3
+        self.p3.setNeighbors(None, self.p4, self.cv2, None)
+        self.p4.setNeighbors(None, self.p5, self.cv3, self.p3)
+        self.p5.setNeighbors(None, self.p6, self.cv4, self.p4)
+        self.p6.setNeighbors(None, self.reg1, self.cv5, self.p5)
+        self.reg1.setNeighbors(None, self.p7, None, self.p6)
+        self.p7.setNeighbors(self.ps2, self.two, None, self.reg1) #self.ps2, self.two, (THERMO)), self.reg1
+        self.two.setNeighbors(None, self.cv1, None, self.p7)
+        self.cv1.setNeighbors(None, self.p8, None, self.two)
+        self.p8.setNeighbors(self.p2, self.reg2, self.reg3, self.cv1)
+        self.reg2.setNeighbors(None, self.p9, self.p11, self.p8)
+        self.p9.setNeighbors(None, self.p10, None, self.reg2)
+        self.p10.setNeighbors(None, None, self.heFilter, self.p9)
+        #row4
+        self.cv2.setNeighbors(self.p3, None, self.he1, None)
+        self.cv3.setNeighbors(self.p4, None, self.he2, None)
+        self.cv4.setNeighbors(self.p5, None, self.he3, None)
+        self.cv5.setNeighbors(self.p6, None, self.n2, None)
+        # thermocouple
+        self.reg3.setNeighbors(self.p8, None, self.four, None)
+        self.p11.setNeighbors(self.reg2, self.three, self.p12, None)
+        self.three.setNeighbors(None, None, None, self.p11)
+        self.heFilter.setNeighbors(self.p10, None, self.p13, None)
+        #row 5
+        self.he1.setNeighbors(self.cv2, None, None, None)
+        self.he2.setNeighbors(self.cv3, None, None, None)
+        self.he3.setNeighbors(self.cv4, None, None, None)
+        self.n2.setNeighbors(self.cv5, None, None, None)
+        self.four.setNeighbors(self.reg3, self.p12, None, None)
+        self.p12.setNeighbors(self.p11, None, None, self.four)
+        self.p13.setNeighbors(self.heFilter, self.p14, self.p18, None)
+        self.p14.setNeighbors(None, None, self.reg4, self.p13)
+        #row 6
+        self.p15.setNeighbors(None, self.p16, self.cv6, None)
+        self.p16.setNeighbors(None, self.p17, None, self.p15)
+        self.p17.setNeighbors(None, self.p18, None, self.p16)
+        self.p18.setNeighbors(self.p13, None, self.reg5, self.p17)
+        self.reg4.setNeighbors(self.p14, None, self.p19, None)
+        #row 7
+        self.cv6.setNeighbors(self.p15, None, self.p20, None)
+        self.reg5.setNeighbors(self.p18, self.p19, None, None)
+        #row 8
+        #rel valve not implemented yet
+        self.p20.setNeighbors(self.cv6, self.ps3, self.p21, None)
+        self.ps3.setNeighbors(None, None, None, self.p20)
+        self.cv7.setNeighbors(None, None, self.p22, None)
+        #row 9
+        self.five.setNeighbors(None, self.p21, None, None)
+        self.p21.setNeighbors(self.p20, None, self.loxProp, self.five)
+        self.ps4.setNeighbors(None, self.p22, None, None)
+        self.p22.setNeighbors(self.cv7, None, self.p23, self.ps4)
+        #rel valve not implemented yet
+        #row 10
+        self.lowDewar.setNeighbors(None, None, self.p24, None)
+        self.six.setNeighbors(None, None, self.p25, None)
+        self.loxProp.setNeighbors(self.p21, None, self.p26, None)
+        self.p23.setNeighbors(self.p22, self.seven, self.lngProp, None)
+        self.seven.setNeighbors(None, None, None, self.p23)
+        #row 11
+        self.p24.setNeighbors(self.lowDewar, self.reg6, None, None)
+        self.reg6.setNeighbors(None, self.eight, None, self.p24)
+        self.eight.setNeighbors(None, self.p25, None, self.reg6)
+        self.p25.setNeighbors(self.six, self.nine, None, self.eight)
+        self.nine.setNeighbors(None, self.p26, None, self.p25)
+        self.p26.setNeighbors(self.loxProp, None, self.ip1, self.nine)
+        self.lngProp.setNeighbors(self.p23, None, self.p32, None)
+        #row 12
+        self.p27.setNeighbors(None, self.reg7, self.lngDewar, None)
+        self.reg7.setNeighbors(None, self.ten, None, self.p27)
+        self.ten.setNeighbors(None, self.p28, None, self.reg7)
+        self.p28.setNeighbors(None, self.p29, self.twelve, self.ten)
+        self.p29.setNeighbors(None, self.ip1, None, self.p28)
+
+        #pipe intersect
+        self.ip1.setNeighborsVertical(self.p26, None, self.thirteen, None)
+        self.ip1.setNeighborsHorizontal(None, self.p31, None, self.p29)
+
+        self.p31.setNeighbors(None, self.eleven, None, self.ip1)
+        self.eleven.setNeighbors(None, self.p32, None, self.p31)
+        self.p32.setNeighbors(self.lngProp, None, self.fourteen, self.eleven)
+        #row 13
+        self.lngDewar.setNeighbors(self.p27, None, None, None)
+        self.twelve.setNeighbors(self.p28, None, None, None)
+        self.thirteen.setNeighbors(self.ip1, None, self.p33, None)
+        self.fourteen.setNeighbors(self.p32, None, self.p36, None)
+        #row 14
+        self.ps5.setNeighbors(None, self.p33, None, None)
+        self.p33.setNeighbors(self.thirteen, self.p34, None, self.ps5)
+        self.p34.setNeighbors(None, self.p35, self.n, self.p33) 
+        self.p35.setNeighbors(None, self.p36, None, self.p34)
+        self.p36.setNeighbors(self.fourteen, self.ps6, None, self.p35)
+        self.ps6.setNeighbors(None, None, None, self.p36)
+        #row 15 and 16
+        self.n.setNeighbors(self.p34, None, None, None)
+
+    def defaultState(self):
+        self.p1.setState(False)
+        self.p2.setState(False)
+        self.p3.setState(False)
+        self.p4.setState(False)
+        self.p5.setState(False)
+        self.p6.setState(False)
+        self.p7.setState(False)
+        self.p8.setState(False)
+        self.p9.setState(False)
+        self.p10.setState(False)
+        self.p11.setState(False)
+        self.p12.setState(False)
+        self.p13.setState(False)
+        self.p14.setState(False)
+        self.p15.setState(False)
+        self.p16.setState(False)
+        self.p17.setState(False)
+        self.p18.setState(False)
+        self.p19.setState(False)
+        self.p20.setState(False)
+        self.p21.setState(False)
+        self.p22.setState(False)
+        self.p23.setState(False)
+        self.p24.setState(False)
+        self.p25.setState(False)
+        self.p26.setState(False)
+        self.p27.setState(False)
+        self.p28.setState(False)
+        self.p29.setState(False)
+        self.p31.setState(False)
+        self.p32.setState(False)
+        self.p33.setState(False)
+        self.p34.setState(False)
+        self.p35.setState(False)
+        self.p36.setState(False)
+
+        self.one.setPipes(False, False, False, False)
+        self.two.setPipes(False, False, False, False)
+        self.three.setPipes(False, False, False, False)
+        self.four.setPipes(False, False, False, False)
+        self.five.setPipes(False, False, False, False)
+        self.six.setPipes(False, False, False, False)
+
+        self.ps1.setPipes(False)
+        self.ps2.setPipes(False)
+        self.ps3.setPipes(False)
+
+        self.o1.setPipes(False)
+        self.o2.setPipes(False)
+
+        self.s1.setPipes(False, False, False, False)
+        self.s2.setPipes(False, False, False, False)
+
+        self.tp1.setPipes(False)
         
 
-    #def updatePipeStatus(self):
-    #    print("AHHHHHHHH")
+    def updatePipeStatus(self):
+        print("AHHHHHHHH")
+
 
 
     def getWindow(self):
