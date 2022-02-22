@@ -15,10 +15,13 @@ from mttkinter import mtTkinter
 import Gauge
 import RelaySwitch
 import PandID
+import BarDisplay
 
 msg = ''
 
 DEBUG=False
+
+Thermocouple_Count=6 #number of thermocouple reading that will be expexted to be displayed
 
 # Returns list of all accessible serial ports
 def getPorts():
@@ -48,31 +51,33 @@ def startup():
 # Relays (no power state), Stepper/Servo (pos = 0)
 def allOff():
     try:
-        arduinoSwitchbox.write(b'8')
-        switch1.actionOff()
-        time.sleep(0.001)
-        switch2.actionOff()
-        time.sleep(0.001)
-        switch3.actionOff()
-        time.sleep(0.001)
-        if(DEBUG): switch4.actionOff()
-        time.sleep(0.001)
-        switch5.actionOff()
-        time.sleep(0.001)
-        switch6.actionOff()
+        if(DEBUG):
+            arduinoSwitchbox.write(b'8')
+            switch1.actionOff()
+            time.sleep(0.001)
+            switch2.actionOff()
+            time.sleep(0.001)
+            switch3.actionOff()
+            time.sleep(0.001)
+            switch4.actionOff()
+            time.sleep(0.001)
+            switch5.actionOff()
+            time.sleep(0.001)
+            switch6.actionOff()
         plumbing.s2.setPercentage(0)
         plumbing.s1.setPercentage(0)
         print("All OFF COMPLETE")
     except:
         print('Serial Error: Arduino Not Connected or Detected')
-    switch1.setLedState(False)
-    switch2.setLedState(False)
-    switch3.setLedState(False)
-    if(DEBUG): switch4.setLedState(False)
-    switch5.setLedState(False)
-    switch6.setLedState(False)
-    switch7.scale.set(0)
-    if(DEBUG): switch8.scale.set(0)
+    if(DEBUG):
+        switch1.setLedState(False)
+        switch2.setLedState(False)
+        switch3.setLedState(False)
+        switch4.setLedState(False)
+        switch5.setLedState(False)
+        switch6.setLedState(False)
+        switch7.scale.set(0)
+        switch8.scale.set(0)
 
     plumbing.one.setState(False)
     plumbing.two.setState(False)
@@ -97,6 +102,8 @@ def actionHandler():
             delay = 0.2
             delaySlider = 0.001
             if(prevCon): # if Arduino is connected via serial
+                if(DEBUG):
+                    continue
                 for i in range(2):
                     try:
                         print('Trigger Relay 1')
@@ -205,20 +212,23 @@ if __name__ == '__main__':
     a = tk.Frame(root, bg='black')  # represents tow 1
     b = tk.Frame(root, bg='black')  # represents tow 2
     c = tk.Frame(root, bg='black')  # represents tow 3
-    if(DEBUG): d = tk.Frame(root, bg='black')  # represents tow 4
-    switch1 = RelaySwitch.Buttons(a, 0, arduinoSwitchbox, "Relay 1", plumbing.one)
-    switch2 = RelaySwitch.Buttons(b, 1, arduinoSwitchbox, "Relay 2", plumbing.two)
-    switch3 = RelaySwitch.Buttons(c, 2, arduinoSwitchbox, "Relay 3", plumbing.three)
-    if(DEBUG): switch4 = RelaySwitch.Buttons(d, 3, arduinoSwitchbox, "Relay 4", plumbing.four)
-    switch5 = RelaySwitch.Buttons(a, 4, arduinoSwitchbox, "Relay 5", plumbing.five)
-    switch6 = RelaySwitch.Buttons(b, 5, arduinoSwitchbox, "Relay 6", plumbing.six)
-    switch7 = RelaySwitch.StepperSlider(c, 0, arduinoSwitchbox)
-    if(DEBUG): switch8 = RelaySwitch.StepperSlider(d, 1, arduinoSwitchbox)
+    d = tk.Frame(root, bg='black')  # represents tow 4
+    if(DEBUG):
+        switch1 = RelaySwitch.Buttons(a, 0, arduinoSwitchbox, "Relay 1", plumbing.one)
+        switch2 = RelaySwitch.Buttons(b, 1, arduinoSwitchbox, "Relay 2", plumbing.two)
+        switch3 = RelaySwitch.Buttons(c, 2, arduinoSwitchbox, "Relay 3", plumbing.three)
+        switch4 = RelaySwitch.Buttons(d, 3, arduinoSwitchbox, "Relay 4", plumbing.four)
+        switch5 = RelaySwitch.Buttons(a, 4, arduinoSwitchbox, "Relay 5", plumbing.five)
+        switch6 = RelaySwitch.Buttons(b, 5, arduinoSwitchbox, "Relay 6", plumbing.six)
+        switch7 = RelaySwitch.StepperSlider(c, 0, arduinoSwitchbox)
+        switch8 = RelaySwitch.StepperSlider(d, 1, arduinoSwitchbox)
     # attaches rows to root tkinter GUI
     a.pack()
     b.pack()
     c.pack()
-    if(DEBUG): d.pack()
+    barGraph=BarDisplay.BarDisplay(d, 'white', 1, Thermocouple_Count)
+    barGraph.getWidget().pack(side="left")
+    d.pack()
 
     g = tk.Frame(root)
     h = tk.Frame(root)
@@ -249,6 +259,7 @@ if __name__ == '__main__':
     h.pack()
 
 
+    i=0
     '''----------------------------
     ------ MAIN PROGRAM LOOP ------
     ----------------------------'''
@@ -268,14 +279,15 @@ if __name__ == '__main__':
                 arduinoSwitchbox = serial.Serial(status.split()[0], 115200)
                 time.sleep(5)
                 connectionLabel.configure(text='CONNECTED ' + status, fg="#41d94d")
-                switch1.setArduino(arduinoSwitchbox)
-                switch2.setArduino(arduinoSwitchbox)
-                switch3.setArduino(arduinoSwitchbox)
-                if(DEBUG): switch4.setArduino(arduinoSwitchbox)
-                switch5.setArduino(arduinoSwitchbox)
-                switch6.setArduino(arduinoSwitchbox)
-                switch7.setArduino(arduinoSwitchbox)
-                if(DEBUG): switch8.setArduino(arduinoSwitchbox)
+                if(DEBUG):
+                    switch1.setArduino(arduinoSwitchbox)
+                    switch2.setArduino(arduinoSwitchbox)
+                    switch3.setArduino(arduinoSwitchbox)
+                    switch4.setArduino(arduinoSwitchbox)
+                    switch5.setArduino(arduinoSwitchbox)
+                    switch6.setArduino(arduinoSwitchbox)
+                    switch7.setArduino(arduinoSwitchbox)
+                    switch8.setArduino(arduinoSwitchbox)
                 prevCon = True
             except SerialException:
                 print("ERROR: LOADING...")
@@ -309,8 +321,15 @@ if __name__ == '__main__':
             g3.setText(data[3], "A2")
             g4.setAngle(abs(5 * float(data[4])) / 1023.0)
             g4.setText(data[4].replace('\n', ''), "A3")
-        plumbing.s2.setPercentage(switch7.getVal())
-        if(DEBUG): plumbing.s1.setPercentage(switch8.getVal())
+
+        #incrementing the temperatrue reading on the leftmost bar by 1 every second
+        barGraph.changeTemp(0, 20+i)
+        time.sleep(1)
+        i+=1
+
+        if(DEBUG):
+            plumbing.s1.setPercentage(switch8.getVal())
+            plumbing.s2.setPercentage(switch7.getVal())
 
         plumbing.updatePipeStatus()
 

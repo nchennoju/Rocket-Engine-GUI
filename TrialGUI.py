@@ -4,9 +4,148 @@
 # used a more modern import to give Tkinter items a namespace
 # tested with Python24  by    vegaseat    01nov2006
 
-import tkinter as tk  # gives tk namespace
+#import tkinter as tk  # gives tk namespace
 import random
 
+
+import threading
+import time
+import serial
+import serial.tools.list_ports
+from serial import SerialException
+import tkinter as tk
+from mttkinter import mtTkinter
+
+# Custom Classes
+import Gauge
+import RelaySwitch
+import PandID
+import BarDisplay
+
+if __name__ == '__main__':
+    global root, switch1, switch2, switch3, switch4, switch5, switch6, switch7, switch8, a, b, c, d, off, g1, g2, g3, g4, connectionLabel, plumbing, fileName, arduinoSwitchbox, prevCon
+
+    # Spacing constants within GUI
+    pad = 10
+    gridLen = 85
+
+    # Initialize GUI Windows
+
+    root = tk.Tk(mt_debug = 1)
+    root.title("Engine Dashboard");
+    root.configure(background="green")
+
+    tk.Label(root, text="Engine Dashboard", bg="pink", fg="white", font="Arial 30").pack(pady=40)
+
+    # GET ARDUINO STATUS / Update on GUI connection label
+    # status = findArduino(getPorts())
+    # connectionLabel = tk.Label(root, text='DISCONNECTED ' + status, bg="black", fg="#ed3b3b", font="Arial 14")
+    # arduinoSwitchbox = serial.Serial()
+    # if (not (status == "None")):
+    #     arduinoSwitchbox = serial.Serial(status.split()[0], 115200)
+    #     connectionLabel.configure(text='CONNECTED ' + status, fg="#41d94d")
+    # connectionLabel.pack()
+
+
+    # RELAY Switche created
+
+    d = tk.Frame(root, bg='black')  # represents tow 4
+
+    # attaches rows to root tkinter GUI
+
+    barGraph=BarDisplay.BarDisplay(d, 'white', 1)
+    barGraph.getWidget().pack(side="left")
+    d.pack()
+
+    g = tk.Frame(root)
+    h = tk.Frame(root)
+
+
+    # ------------------------ DATA LOGGER GAUGE ELEMENTS -----------------------------
+    # consists of two rows of 2 gauges
+    g1 = Gauge.Gauge(g, 'black', 5)
+    g1.setText("Nan", "A0")
+    g1.getWidget().pack(side="left")
+    g2 = Gauge.Gauge(g, 'black', 5)
+    g2.setText("Nan", "A1")
+    g2.getWidget().pack(side="right")
+    g3 = Gauge.Gauge(h, 'black', 5)
+    g3.setText("Nan", "A2")
+    g3.getWidget().pack(side="left")
+    g4 = Gauge.Gauge(h, 'black', 5)
+    g4.setText("Nan", "A3")
+    g4.getWidget().pack(side="right")
+    g.pack()
+    h.pack()
+
+
+    '''----------------------------
+    ------ MAIN PROGRAM LOOP ------
+    ----------------------------'''
+    prevCon = True
+    temp=10
+    while(True):
+        print("updating")
+        time.sleep(0.5)
+        barGraph.changeTemp(2, temp)
+        temp+=1
+        root.update()
+"""
+    while True:
+
+        # ARDUINO CONNECTION CHECK
+        status = findArduino(getPorts())
+        if (status == "None"):
+            connectionLabel.configure(text='DISCONNECTED ' + status, fg="#ed3b3b")
+            g1.setText("Nan", "A0")
+            g2.setText("Nan", "A1")
+            g3.setText("Nan", "A2")
+            g4.setText("Nan", "A3")
+            prevCon = False
+        elif (not prevCon and status != 'None'):
+            try:
+                arduinoSwitchbox = serial.Serial(status.split()[0], 115200)
+                time.sleep(5)
+                connectionLabel.configure(text='CONNECTED ' + status, fg="#41d94d")
+                prevCon = True
+            except SerialException:
+                print("ERROR: LOADING...")
+        else:
+            connectionLabel.configure(text='CONNECTED ' + status, fg="#41d94d")
+
+
+        # Attempt to get data from Arduino
+        try:
+            strSerial = conv(str(arduinoSwitchbox.readline()))
+        except SerialException:
+            strSerial = ''#
+
+        data = strSerial.split("\\t")
+
+        if (data[0] == "Time"):
+            # detect serial data start
+            file = open(fileName, "a")
+            file.write(strSerial[0:len(strSerial) - 2] + "\n")
+            print('-------- BEGIN --------')
+            file.close()
+        elif (len(data) > 4 and data[0] != "Time"):
+            file = open(fileName, "a")
+            file.write((strSerial[0:len(strSerial) - 2] + "\n"))
+            file.close()
+            g1.setAngle(abs(5 * float(data[1])) / 1023.0)
+            g1.setText(data[1], "A0")
+            g2.setAngle(abs(5 * float(data[2])) / 1023.0)
+            g2.setText(data[2], "A1")
+            g3.setAngle(abs(5 * float(data[3])) / 1023.0)
+            g3.setText(data[3], "A2")
+            g4.setAngle(abs(5 * float(data[4])) / 1023.0)
+            g4.setText(data[4].replace('\n', ''), "A3")
+"""
+
+
+
+
+"""
 data = [20, 15, 10, 7, 5, 4, 3, 2, 1, 1, 0]
 
 #data= [1,2,3,4,5, 6, 7]
@@ -50,10 +189,12 @@ for x, y in enumerate(data):
     textArr.append(temp)
 
 
+temp=c.create_text(100, 20, anchor=tk.SW, text="testing abcd" )
+
 
 
 def update():
-    global vara
+    global vara, c
     for i in range(len(rectArr)):
            x=i
            x0, y0, x1, y1 = c.coords(rectArr[i])
@@ -70,5 +211,6 @@ def update():
     root.after(1000, update)
 
 vara=0
-update()
-root.mainloop()
+#update()
+#root.mainloop()
+"""
