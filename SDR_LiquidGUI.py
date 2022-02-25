@@ -232,13 +232,13 @@ if __name__ == '__main__':
 
     g = tk.Frame(root)
     h = tk.Frame(root)
-    s = tk.Button(root, text="STARTUP", padx=40, pady=10, font="Verdana 14", bg="yellow", command=startup,
-                  activebackground="yellow")
-    off = tk.Button(root, text="All OFF", padx=30, pady=10, font="Verdana 14", bg="RED", command=allOff,
-                    activebackground="RED")
-
-    s.pack(pady=pad)
-    off.pack(pady=pad)
+    # s = tk.Button(root, text="STARTUP", padx=40, pady=10, font="Verdana 14", bg="yellow", command=startup,
+    #               activebackground="yellow")
+    # off = tk.Button(root, text="All OFF", padx=30, pady=10, font="Verdana 14", bg="RED", command=allOff,
+    #                 activebackground="RED")
+    #
+    # s.pack(pady=pad)
+    # off.pack(pady=pad)
 
 
     # ------------------------ DATA LOGGER GAUGE ELEMENTS -----------------------------
@@ -301,7 +301,8 @@ if __name__ == '__main__':
         except SerialException:
             strSerial = ''#
 
-        data = strSerial.split("\\t")
+        #data = strSerial.split("\\t")
+        data = strSerial.split(",")
 
         if (data[0] == "Time"):
             # detect serial data start
@@ -322,10 +323,11 @@ if __name__ == '__main__':
             g4.setAngle(abs(5 * float(data[4])) / 1023.0)
             g4.setText(data[4].replace('\n', ''), "A3")
 
-        #incrementing the temperatrue reading on the leftmost bar by 1 every second
-        barGraph.changeTemp(0, 20+i)
-        time.sleep(1)
-        i+=1
+            barGraph.changeTemp(0, data[38])
+            barGraph.changeTemp(1, data[39])
+
+        # time.sleep(1)
+        # i+=1
 
         if(DEBUG):
             plumbing.s1.setPercentage(switch8.getVal())
