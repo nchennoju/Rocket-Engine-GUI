@@ -34,6 +34,11 @@ def findArduino(portsFound):
     for i in range(0, numConnections):
         if ('Uno' in str(portsFound[i]) or 'Nano' in str(portsFound[i]) or 'CH340' in str(portsFound[i])):
             return str(portsFound[i])
+
+        # teensy 3.6
+        if ('USB Serial Device' in str(portsFound[i])):
+            print(portsFound[i])
+            return str(portsFound[i])
     return "None"
 
 
@@ -274,10 +279,11 @@ if __name__ == '__main__':
             g3.setText("Nan", "A2")
             g4.setText("Nan", "A3")
             prevCon = False
+            print("No Line")
         elif (not prevCon and status != 'None'):
+            print("Line Found")
             try:
                 arduinoSwitchbox = serial.Serial(status.split()[0], 115200)
-                time.sleep(5)
                 connectionLabel.configure(text='CONNECTED ' + status, fg="#41d94d")
                 if(DEBUG):
                     switch1.setArduino(arduinoSwitchbox)
@@ -303,7 +309,7 @@ if __name__ == '__main__':
 
         #data = strSerial.split("\\t")
         data = strSerial.split(",")
-
+        print(data)
         if (data[0] == "Time"):
             # detect serial data start
             file = open(fileName, "a")
@@ -323,8 +329,8 @@ if __name__ == '__main__':
             g4.setAngle(abs(5 * float(data[4])) / 1023.0)
             g4.setText(data[4].replace('\n', ''), "A3")
 
-            barGraph.changeTemp(0, data[38])
-            barGraph.changeTemp(1, data[39])
+            barGraph.changeTemp(0, float(data[38]))
+            barGraph.changeTemp(1, float(data[39]))
 
         # time.sleep(1)
         # i+=1
