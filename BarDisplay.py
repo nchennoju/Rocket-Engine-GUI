@@ -10,7 +10,7 @@ import tkinter as tk
 # the variables below size the bar graph
 # experiment with them to fit your needs
 # highest y = max_data_value * y_stretch
-y_stretch = 1
+y_stretch = 0.4
 # gap between lower canvas edge and x axis
 y_gap = 15
 # stretch enough to get all data items in
@@ -27,7 +27,7 @@ class BarDisplay:
         wVar=400
         hVar=250
         self.c = tk.Canvas(root, width=wVar, height=hVar, bg=background, highlightthickness=0)
-        self.data= [20]* TC_Count#, 7, 5, 4, 3, 2, 1, 1, 0]
+        self.data= [500]* TC_Count#, 7, 5, 4, 3, 2, 1, 1, 0]
         self.rectArr=[]
         self.textArr=[]
         self.c_width=wVar

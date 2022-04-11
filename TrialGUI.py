@@ -16,12 +16,25 @@ from serial import SerialException
 import tkinter as tk
 from mttkinter import mtTkinter
 
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.figure import Figure
+import matplotlib.animation as animation
+from matplotlib import style
+import collections
+import numpy as np
+import time
+import tkinter as tk
+import matplotlib.pyplot as plt
+
 # Custom Classes
 import Gauge
 import RelaySwitch
 import PandID
 import BarDisplay
-
+import LineGraph
+dataList=[0,1,2,3,4,5]
 if __name__ == '__main__':
     global root, switch1, switch2, switch3, switch4, switch5, switch6, switch7, switch8, a, b, c, d, off, g1, g2, g3, g4, connectionLabel, plumbing, fileName, arduinoSwitchbox, prevCon
 
@@ -53,8 +66,12 @@ if __name__ == '__main__':
 
     # attaches rows to root tkinter GUI
 
-    barGraph=BarDisplay.BarDisplay(d, 'white', 1)
-    barGraph.getWidget().pack(side="left")
+    # barGraph=BarDisplay.BarDisplay(d, 'white', 1, 2)
+    # barGraph.getWidget().pack(side="left")
+    f = Figure(figsize=(12, 6), dpi=100)
+
+    lineGraph=LineGraph.LineGraph(d, count=6, datapoints=20)
+
     d.pack()
 
     g = tk.Frame(root)
@@ -79,6 +96,9 @@ if __name__ == '__main__':
     h.pack()
 
 
+
+    lineFig=lineGraph.getFig()
+    ani = animation.FuncAnimation(lineFig, func=lineGraph.animate, interval=100, blit=False)
     '''----------------------------
     ------ MAIN PROGRAM LOOP ------
     ----------------------------'''
@@ -86,131 +106,15 @@ if __name__ == '__main__':
     temp=10
     while(True):
         print("updating")
-        time.sleep(0.5)
-        barGraph.changeTemp(2, temp)
+        time.sleep(0.1)
         temp+=1
+
+        #lineGraph.nextPts(dataList)
+        dataList.append(temp%10)
+
+        lineGraph.nextPoint(temp%10, 0)
+        lineGraph.nextPoint(((temp+5)%10), 1)
+
+
         root.update()
-"""
-    while True:
-
-        # ARDUINO CONNECTION CHECK
-        status = findArduino(getPorts())
-        if (status == "None"):
-            connectionLabel.configure(text='DISCONNECTED ' + status, fg="#ed3b3b")
-            g1.setText("Nan", "A0")
-            g2.setText("Nan", "A1")
-            g3.setText("Nan", "A2")
-            g4.setText("Nan", "A3")
-            prevCon = False
-        elif (not prevCon and status != 'None'):
-            try:
-                arduinoSwitchbox = serial.Serial(status.split()[0], 115200)
-                time.sleep(5)
-                connectionLabel.configure(text='CONNECTED ' + status, fg="#41d94d")
-                prevCon = True
-            except SerialException:
-                print("ERROR: LOADING...")
-        else:
-            connectionLabel.configure(text='CONNECTED ' + status, fg="#41d94d")
-
-
-        # Attempt to get data from Arduino
-        try:
-            strSerial = conv(str(arduinoSwitchbox.readline()))
-        except SerialException:
-            strSerial = ''#
-
-        data = strSerial.split("\\t")
-
-        if (data[0] == "Time"):
-            # detect serial data start
-            file = open(fileName, "a")
-            file.write(strSerial[0:len(strSerial) - 2] + "\n")
-            print('-------- BEGIN --------')
-            file.close()
-        elif (len(data) > 4 and data[0] != "Time"):
-            file = open(fileName, "a")
-            file.write((strSerial[0:len(strSerial) - 2] + "\n"))
-            file.close()
-            g1.setAngle(abs(5 * float(data[1])) / 1023.0)
-            g1.setText(data[1], "A0")
-            g2.setAngle(abs(5 * float(data[2])) / 1023.0)
-            g2.setText(data[2], "A1")
-            g3.setAngle(abs(5 * float(data[3])) / 1023.0)
-            g3.setText(data[3], "A2")
-            g4.setAngle(abs(5 * float(data[4])) / 1023.0)
-            g4.setText(data[4].replace('\n', ''), "A3")
-"""
-
-
-
-
-"""
-data = [20, 15, 10, 7, 5, 4, 3, 2, 1, 1, 0]
-
-#data= [1,2,3,4,5, 6, 7]
-
-root = tk.Tk()
-root.title("Tkinter Bar Graph")
-c_width = 600
-c_height = 450
-c = tk.Canvas(root, width=c_width, height=c_height, bg= 'white')
-c.pack()
-
-# the variables below size the bar graph
-# experiment with them to fit your needs
-# highest y = max_data_value * y_stretch
-y_stretch = 1
-# gap between lower canvas edge and x axis
-y_gap = 20
-# stretch enough to get all data items in
-x_stretch = 10
-x_width = 40
-# gap between left canvas edge and y axis
-x_gap = 20
-
-vara=0
-
-rectArr=[]
-textArr=[]
-
-for x, y in enumerate(data):
-    # calculate reactangle coordinates (integers) for each bar
-    x0 = x * x_stretch + x * x_width + x_gap
-    y0 = c_height - (y * y_stretch + y_gap)
-    x1 = x * x_stretch + x * x_width + x_width + x_gap
-    y1 = c_height - y_gap
-    print("("+str(x0)+", "+str(y0)+")  ("+str(x1)+", "+str(y1)+")")
-    # draw the bar
-    temp=c.create_rectangle(x0, y0, x1, y1, fill="red")
-    rectArr.append(temp)
-    # put the y value above each bar
-    temp=c.create_text(x0+2, y1+20, anchor=tk.SW, text=str( (c_height-y0-y_gap)/y_stretch  )  )
-    textArr.append(temp)
-
-
-temp=c.create_text(100, 20, anchor=tk.SW, text="testing abcd" )
-
-
-
-def update():
-    global vara, c
-    for i in range(len(rectArr)):
-           x=i
-           x0, y0, x1, y1 = c.coords(rectArr[i])
-           y=vara+1
-           x0 = x * x_stretch + x * x_width + x_gap
-           y0 = c_height - (y * y_stretch + y_gap)
-           x1 = x * x_stretch + x * x_width + x_width + x_gap
-           y1 = c_height - y_gap
-           c.coords(rectArr[i],x0, y0, x1, y1 )
-           c.itemconfig(textArr[i], text=str(y0) )
-    vara+=1
-
-    print("("+str(x0)+", "+str(y0)+")  ("+str(x1)+", "+str(y1)+")")
-    root.after(1000, update)
-
-vara=0
-#update()
-#root.mainloop()
-"""
+        root.update_idletasks()

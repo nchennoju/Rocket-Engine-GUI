@@ -21,7 +21,7 @@ msg = ''
 
 DEBUG=False
 
-Thermocouple_Count=6 #number of thermocouple reading that will be expexted to be displayed
+Thermocouple_Count=4 #number of thermocouple reading that will be expexted to be displayed
 
 # Returns list of all accessible serial ports
 def getPorts():
@@ -341,5 +341,6 @@ if __name__ == '__main__':
 
         plumbing.updatePipeStatus()
 
+        root.update_idletasks()
         root.update()
         plumbing.getWindow().update()
