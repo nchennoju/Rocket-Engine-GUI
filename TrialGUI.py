@@ -68,7 +68,9 @@ if __name__ == '__main__':
 
     # barGraph=BarDisplay.BarDisplay(d, 'white', 1, 2)
     # barGraph.getWidget().pack(side="left")
-    f = Figure(figsize=(12, 6), dpi=100)
+
+
+    #seems to be unessesary f = Figure(figsize=(12, 6), dpi=100)
 
     lineGraph=LineGraph.LineGraph(d, count=6, datapoints=20)
 
@@ -110,7 +112,8 @@ if __name__ == '__main__':
         temp+=1
 
         #lineGraph.nextPts(dataList)
-        dataList.append(temp%10)
+
+        #dataList.append(temp%10)
 
         lineGraph.nextPoint(temp%10, 0)
         lineGraph.nextPoint(((temp+5)%10), 1)

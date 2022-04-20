@@ -16,6 +16,21 @@ import Gauge
 import RelaySwitch
 import PandID
 import BarDisplay
+import LineGraph
+
+# imports needed for live plotting
+
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.figure import Figure
+import matplotlib.animation as animation
+from matplotlib import style
+import collections
+import numpy as np
+import time
+import tkinter as tk
+import matplotlib.pyplot as plt
 
 msg = ''
 
@@ -231,8 +246,14 @@ if __name__ == '__main__':
     a.pack()
     b.pack()
     c.pack()
-    barGraph=BarDisplay.BarDisplay(d, 'white', 1, Thermocouple_Count)
-    barGraph.getWidget().pack(side="left")
+    # barGraph=BarDisplay.BarDisplay(d, 'white', 1, Thermocouple_Count)
+    # barGraph.getWidget().pack(side="left")
+
+    lineGraph=LineGraph.LineGraph(d, count=2, datapoints=200, floor=-90, ceiling=90)
+
+    lineFig=lineGraph.getFig()
+    ani = animation.FuncAnimation(lineFig, func=lineGraph.animate, interval=100, blit=False)
+
     d.pack()
 
     g = tk.Frame(root)
@@ -265,11 +286,13 @@ if __name__ == '__main__':
 
 
     i=0
+    temp=0
     '''----------------------------
     ------ MAIN PROGRAM LOOP ------
     ----------------------------'''
     prevCon = True
     while True:
+        temp+=1
         # ARDUINO CONNECTION CHECK
         status = findArduino(getPorts())
         if (status == "None"):
@@ -329,8 +352,8 @@ if __name__ == '__main__':
             g4.setAngle(abs(5 * float(data[4])) / 1023.0)
             g4.setText(data[4].replace('\n', ''), "A3")
 
-            barGraph.changeTemp(0, float(data[38]))
-            barGraph.changeTemp(1, float(data[39]))
+            # barGraph.changeTemp(0, float(data[38]))
+            # barGraph.changeTemp(1, float(data[39]))
 
         # time.sleep(1)
         # i+=1
@@ -340,6 +363,14 @@ if __name__ == '__main__':
             plumbing.s2.setPercentage(switch7.getVal())
 
         plumbing.updatePipeStatus()
+
+        #for testing when not hooked up to ECU/serial port
+        lineGraph.nextPoint(temp%100, 0)
+        lineGraph.nextPoint(((temp+50)%100), 1)
+
+#must be hooked up to ECU and recieving data through serial in order to work
+#        lineGraph.nextPoint(float(data[39], 0)
+
 
         root.update_idletasks()
         root.update()
