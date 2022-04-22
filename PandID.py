@@ -1,5 +1,5 @@
 import tkinter as tk
-
+ 
 import Header
 import DiagramComponents
 
@@ -346,7 +346,7 @@ class UCI_Liquid_Engine_Plumbing:
         #row 14
         self.ps5.setNeighbors(None, self.p33, None, None)
         self.p33.setNeighbors(self.thirteen, self.p34, None, self.ps5)
-        self.p34.setNeighbors(None, self.p35, self.n, self.p33) 
+        self.p34.setNeighbors(None, self.p35, self.n, self.p33)
         self.p35.setNeighbors(None, self.p36, None, self.p34)
         self.p36.setNeighbors(self.fourteen, self.ps6, None, self.p35)
         self.ps6.setNeighbors(None, None, None, self.p36)
@@ -401,17 +401,41 @@ class UCI_Liquid_Engine_Plumbing:
         self.ps2.setPipes(False)
         self.ps3.setPipes(False)
 
-        self.o1.setPipes(False)
-        self.o2.setPipes(False)
 
-        self.s1.setPipes(False, False, False, False)
-        self.s2.setPipes(False, False, False, False)
-
-        self.tp1.setPipes(False)
-        
 
     def updatePipeStatus(self):
-        print("AHHHHHHHH")
+        #self.head = [self.he1, self.he2, self.he3, self.n2]
+
+        self.defaultState()
+
+        listMultiplePaths = []
+        visited = []
+        for element in self.head:
+            listMultiplePaths.append(element)
+
+        head = listMultiplePaths[0]
+
+        # Basic traversal method
+        while (len(listMultiplePaths) > 0):
+            if (type(head) is DiagramComponents.Pipe):
+                head.setState(True)
+            if (head.top is not None and head.top not in visited):
+                listMultiplePaths.append(head.top)
+                visited.append(head.top)
+            if (head.right is not None and head.right not in visited):
+                listMultiplePaths.append(head.right)
+                visited.append(head.right)
+            if (head.bottom is not None and head.bottom not in visited):
+                listMultiplePaths.append(head.bottom)
+                visited.append(head.bottom)
+            if (head.left is not None and head.left not in visited):
+                listMultiplePaths.append(head.left)
+                visited.append(head.left)
+            listMultiplePaths.pop(0)
+            if(len(listMultiplePaths) > 0):
+                head = listMultiplePaths[0]
+            else:
+                break
 
 
 

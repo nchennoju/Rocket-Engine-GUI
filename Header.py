@@ -20,7 +20,7 @@ class Header:
 
     def getWidget(self):
         return self.c
-
+ 
 class Text:
 
     def __init__(self, root, background, text, width, height, size):

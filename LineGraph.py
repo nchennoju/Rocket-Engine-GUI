@@ -9,7 +9,7 @@ import numpy as np
 import time
 import tkinter as tk
 import matplotlib.pyplot as plt
-
+ 
 class LineGraph:
     def __init__(self, root, count=2, datapoints=100, floor=-100, ceiling=100, mving_avg_Size=10):
         #root= TK object which LineGraph will be placed onto
@@ -29,7 +29,10 @@ class LineGraph:
             self.yCoords[i]= collections.deque(np.zeros(datapoints))
 
         #will hold a number of points, used for calculating moving average
-        self.mvAvg = [collections.deque(np.zeros(mving_avg_Size))] * self.activeLines
+        self.mvAvg=[]
+        for i in range(self.activeLines):
+            self.mvAvg.append(collections.deque(np.zeros(mving_avg_Size)))
+       # self.mvAvg = [collections.deque(np.zeros(mving_avg_Size))] * self.activeLines
 
         #holds the line objects themselves
         self.lineControl=[None]*self.activeLines
@@ -42,7 +45,7 @@ class LineGraph:
         self.ax1.set_ylim(floor, ceiling)
         self.ax1.set_xlim(0, int(datapoints*1.2))
 
-        self.annotations=[ self.ax1.annotate("(%s)" % 0, xy=(datapoints, 0), textcoords='data') for i in range(self.activeLines) ]
+        self.annotations=[ self.ax1.annotate((" "*(i*4))+"(%s)" % 0, xy=(datapoints, 0), textcoords='data') for i in range(self.activeLines) ]
 
 
 
@@ -105,3 +108,4 @@ class LineGraph:
 
             self.yCoords[index].popleft()
             self.yCoords[index].append(avg)
+            print("mvAvg "+str(index)+"="+str(avg))

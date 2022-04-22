@@ -11,7 +11,7 @@ reusability. The Component class works by taking in the basic parameters of the 
 background color, width and height of the local canvas, 4 input parameters indicating which sides
 of the components have pipes and the color of the fluid.
 """
-
+ 
 class Component:
     # The following class has been defined to be inherited by the different P&ID components
     # as many P&ID components share several attributes (excluding the nozzle, tank, and pipes)
@@ -810,7 +810,7 @@ class Nozzle:
         self.plot.append((0.1 * width, height * 0.7))
         self.plot.append((0.1 * width, height * 0.1))
         self.plot.append((1, height * 0.1))
-        
+
         self.base = self.c.create_polygon(self.plot, outline='white')
 
         self.thrust = self.c.create_text(width/2.0, (height/2.0) - padding, font=("Arial", 10), fill="white", text='thrust')
