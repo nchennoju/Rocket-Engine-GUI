@@ -45,13 +45,16 @@ class LineGraph:
         self.ax1.set_ylim(floor, ceiling)
         self.ax1.set_xlim(0, int(datapoints*1.2))
 
-        self.annotations=[ self.ax1.annotate((" "*(i*4))+"(%s)" % 0, xy=(datapoints, 0), textcoords='data') for i in range(self.activeLines) ]
+        self.annotations=[ self.ax1.annotate("(%s)" % 0, xy=(datapoints, 0), textcoords='data') for i in range(self.activeLines) ]
+        #redisplays readings next to the legend in the top right corner
+        self.static_annotations=[ self.ax1.annotate(str(i), xy=(datapoints*1.05, ceiling/2 +18 -(6*i) ), textcoords='data') for i in range(self.activeLines) ]
 
 
 
         for i in range(self.activeLines):
-            #self.lineControl[i], =ax1.plot(self.xList, [(-1-i)]*datapoints, colors[i], marker='o', label="line1")
-            self.lineControl[i], =self.ax1.plot(self.xList, [(-1-i)]*datapoints, colors[i], label="line1")
+            #self.lineControl[i], =ax1.plot(self.xList, [(-1-i)]*datapoints, colors[i], marker='o', label=genName)
+            genName="TC"+str(i+1)
+            self.lineControl[i], =self.ax1.plot(self.xList, [(-1-i)]*datapoints, colors[i], label=genName)
 
         self.ax1.plot(self.xList, [0]*datapoints, label="origin")
 
@@ -75,12 +78,12 @@ class LineGraph:
 
         for i in range(self.activeLines):
             self.lineControl[i].set_data(self.xList, self.yCoords[i])
-        #for j in range(self.activeLines):
-        #self.annotations[0].remove()
-        #self.annotations[0]=self.ax1.annotate("(%s)" %self.yCoords[0][-1], xy=(len(self.xList),self.yCoords[0][-1]), textcoords='data' )
+
         for j in range(self.activeLines):
             self.annotations[j].set_y(self.yCoords[j][-1])
             self.annotations[j].set_text(self.yCoords[j][-1])
+            self.static_annotations[j].set_text(self.yCoords[j][-1])
+
 
 
 
