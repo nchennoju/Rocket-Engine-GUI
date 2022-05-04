@@ -9,12 +9,32 @@ import serial.tools.list_ports
 from serial import SerialException
 import tkinter as tk
 from mttkinter import mtTkinter
-
+ 
 
 # Custom Classes
 import Gauge
 import RelaySwitch
 import PandID
+import BarDisplay
+import LineGraph
+
+# imports needed for live plotting
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.figure import Figure
+import matplotlib.animation as animation
+from matplotlib import style
+import collections
+import numpy as np
+import time
+import tkinter as tk
+import matplotlib.pyplot as plt
+
+from matplotlib import style
+
+print(plt.style.available)
+plt.style.use("dark_background")
 
 msg = ''
 
@@ -163,7 +183,8 @@ if __name__ == '__main__':
     gridLen = 60 #85
 
     # Initialize GUI Windows
-    plumbing = PandID.UCI_Liquid_Engine_Plumbing(gridLen) #PandID.(gridLen)  # P&ID diagram window
+    #plumbing = PandID.UCI_Liquid_Engine_Plumbing(gridLen) #PandID.(gridLen)  # P&ID diagram window
+    plumbing = PandID.UCI_VTF_Plumbing(gridLen) #PandID.(gridLen)  # P&ID diagram window
 
     root = tk.Tk(mt_debug = 1)
     root.title("Engine Dashboard");
@@ -182,7 +203,7 @@ if __name__ == '__main__':
 
 
     # RELAY Switches created
-    a = tk.Frame(root, bg='black')  # represents tow 1
+    """a = tk.Frame(root, bg='black')  # represents tow 1
     b = tk.Frame(root, bg='black')  # represents tow 2
     c = tk.Frame(root, bg='black')  # represents tow 3
     d = tk.Frame(root, bg='black')  # represents tow 4
@@ -217,7 +238,17 @@ if __name__ == '__main__':
                     activebackground="RED")
 
     s.pack(pady=pad)
-    off.pack(pady=pad)
+    off.pack(pady=pad)"""
+    d = tk.Frame(root, bg='black')  # represents tow 4
+    lineGraph = LineGraph.LineGraph(d, count=3, datapoints=200, floor=-50, ceiling=50)
+
+    lineFig = lineGraph.getFig()
+    ani = animation.FuncAnimation(lineFig, func=lineGraph.animate, interval=100, blit=False)
+
+    d.pack()
+
+    g = tk.Frame(root)
+    h = tk.Frame(root)
 
 
     # ------------------------ DATA LOGGER GAUGE ELEMENTS -----------------------------
@@ -278,7 +309,23 @@ if __name__ == '__main__':
 
         data = strSerial.split("\\t")
         vals = data[len(data) - 1].split(",")
-        print(vals)
+        print(vals, len(vals))
+
+        #0,0,0,0,0,0,0,0,0,0,0,3002,3005,2998,4095,2999,2996,3008,3015,3026,3014,3024,3022,3020,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14
+
+        # set p&id solenoid states
+        try:
+            plumbing.one.setState((vals[0] == '1'))
+            plumbing.seven.setState((vals[1] == '0'))
+            plumbing.six.setState((vals[2] == '0'))
+            plumbing.four.setState((vals[3] == '1'))
+            plumbing.five.setState((vals[4] == '0'))
+
+            # update if hall effect is triggered
+            plumbing.thirteen.setState((vals[17] == '1'))
+            plumbing.fourteen.setState((vals[17] == '1'))
+        except:
+            print("val error (telemetry parsing)")
 
         if (data[0] == "Time"):
             # detect serial data start
@@ -291,18 +338,33 @@ if __name__ == '__main__':
             file.write((strSerial[0:len(strSerial) - 2] + "\n"))
             file.close()
             try:
-                g1.setAngle(abs(5 * float(vals[39])) / 1023.0)
-                g1.setText(vals[9], "A0")
-                g2.setAngle(abs(5 * float(vals[40])) / 1023.0)
-                g2.setText(vals[10], "A1")
-                g3.setAngle(abs(5 * float(vals[41])) / 1023.0)
+                g1.setAngle(int(vals[13]))
+                g1.setText(vals[13], "A0")
+                g2.setAngle(int(vals[13]))
+                g2.setText(vals[13], "A1")
+                g3.setAngle(int(vals[11]))
                 g3.setText(vals[11], "A2")
-                g4.setAngle(abs(5 * float(vals[42])) / 1023.0)
-                g4.setText(vals[12].replace('\n', ''), "A3")
+                g4.setAngle(int(vals[11]))
+                g4.setText(vals[11], "A3")
             except:
                 print("you got problems")
 
-        #plumbing.updatePipeStatus()
+        try:
+            lineGraph.nextPoint(int(vals[8]), 0)
+            lineGraph.nextPoint(int(vals[9]), 1)
+            lineGraph.nextPoint(int(vals[10]), 2)
+        except:
+            print("Line graph reading error.")
+
+
+       # plumbing.updatePipeStatus()
+
+
+        # lineGraph.nextPoint(temp%100, 0)
+        # lineGraph.nextPoint( -1*((temp+50)%100), 1)
+
+        root.update_idletasks()
+        root.update()
 
         root.update()
         plumbing.getWindow().update()

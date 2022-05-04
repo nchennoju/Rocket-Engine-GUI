@@ -11,14 +11,32 @@ from serial import SerialException
 import tkinter as tk
 from mttkinter import mtTkinter
 
-
 # Custom Classes
 import Gauge
 import RelaySwitch
 import PandID
+import BarDisplay
+import LineGraph
+
+# imports needed for live plotting
+
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.figure import Figure
+import matplotlib.animation as animation
+from matplotlib import style
+import collections
+import numpy as np
+import time
+import tkinter as tk
+import matplotlib.pyplot as plt
 
 msg = ''
 
+DEBUG=False
+
+Thermocouple_Count=4 #number of thermocouple reading that will be expexted to be displayed
 
 # Returns list of all accessible serial ports
 def getPorts():
@@ -30,6 +48,11 @@ def findArduino(portsFound):
     numConnections = len(portsFound)
     for i in range(0, numConnections):
         if ('Uno' in str(portsFound[i]) or 'Nano' in str(portsFound[i]) or 'CH340' in str(portsFound[i])):
+            return str(portsFound[i])
+
+        # teensy 3.6
+        if ('USB Serial Device' in str(portsFound[i])):
+            print(portsFound[i])
             return str(portsFound[i])
     return "None"
 
@@ -48,31 +71,33 @@ def startup():
 # Relays (no power state), Stepper/Servo (pos = 0)
 def allOff():
     try:
-        arduinoSwitchbox.write(b'8')
-        switch1.actionOff()
-        time.sleep(0.001)
-        switch2.actionOff()
-        time.sleep(0.001)
-        switch3.actionOff()
-        time.sleep(0.001)
-        switch4.actionOff()
-        time.sleep(0.001)
-        switch5.actionOff()
-        time.sleep(0.001)
-        switch6.actionOff()
+        if(DEBUG):
+            arduinoSwitchbox.write(b'8')
+            switch1.actionOff()
+            time.sleep(0.001)
+            switch2.actionOff()
+            time.sleep(0.001)
+            switch3.actionOff()
+            time.sleep(0.001)
+            switch4.actionOff()
+            time.sleep(0.001)
+            switch5.actionOff()
+            time.sleep(0.001)
+            switch6.actionOff()
         plumbing.s2.setPercentage(0)
         plumbing.s1.setPercentage(0)
         print("All OFF COMPLETE")
     except:
         print('Serial Error: Arduino Not Connected or Detected')
-    switch1.setLedState(False)
-    switch2.setLedState(False)
-    switch3.setLedState(False)
-    switch4.setLedState(False)
-    switch5.setLedState(False)
-    switch6.setLedState(False)
-    switch7.scale.set(0)
-    switch8.scale.set(0)
+    if(DEBUG):
+        switch1.setLedState(False)
+        switch2.setLedState(False)
+        switch3.setLedState(False)
+        switch4.setLedState(False)
+        switch5.setLedState(False)
+        switch6.setLedState(False)
+        switch7.scale.set(0)
+        switch8.scale.set(0)
 
     plumbing.one.setState(False)
     plumbing.two.setState(False)
@@ -97,6 +122,8 @@ def actionHandler():
             delay = 0.2
             delaySlider = 0.001
             if(prevCon): # if Arduino is connected via serial
+                if(DEBUG):
+                    continue
                 for i in range(2):
                     try:
                         print('Trigger Relay 1')
@@ -115,13 +142,13 @@ def actionHandler():
                         switch3.actionOn()
                         time.sleep(delay)
                         for j in range(0, 101, 2):
-                            switch8.scale.set(j)
+                            if(DEBUG): switch8.scale.set(j)
                             time.sleep(delaySlider)
                         for j in range(0, 101, 2):
-                            switch8.scale.set(100-j)
+                            if(DEBUG): switch8.scale.set(100-j)
                             time.sleep(delaySlider)
                         print('Trigger Relay 4')
-                        switch4.actionOn()
+                        if(DEBUG): switch4.actionOn()
                         time.sleep(delay)
                         print('Trigger Relay 5')
                         switch5.actionOn()
@@ -142,7 +169,7 @@ def actionHandler():
                         switch5.actionOff()
                         time.sleep(delay)
                         print('Trigger Relay 4')
-                        switch4.actionOff()
+                        if(DEBUG): switch4.actionOff()
                         time.sleep(delay)
                         print('Trigger Relay 3')
                         switch3.actionOff()
@@ -175,7 +202,8 @@ if __name__ == '__main__':
 
     # Get file name from user
     print("Enter file name (don't include file extension): ", end='')
-    fileName = input() + ".txt"
+    #fileName = input() + ".txt"
+    fileName="log.txt"
 
     # Spacing constants within GUI
     pad = 10
@@ -186,9 +214,9 @@ if __name__ == '__main__':
 
     root = tk.Tk(mt_debug = 1)
     root.title("Engine Dashboard");
-    root.configure(background="black")
+    root.configure(background="green")
 
-    tk.Label(root, text="Engine Dashboard", bg="black", fg="white", font="Arial 30").pack(pady=40)
+    tk.Label(root, text="Engine Dashboard", bg="pink", fg="white", font="Arial 30").pack(pady=40)
 
     # GET ARDUINO STATUS / Update on GUI connection label
     status = findArduino(getPorts())
@@ -205,29 +233,38 @@ if __name__ == '__main__':
     b = tk.Frame(root, bg='black')  # represents tow 2
     c = tk.Frame(root, bg='black')  # represents tow 3
     d = tk.Frame(root, bg='black')  # represents tow 4
-    switch1 = RelaySwitch.Buttons(a, 0, arduinoSwitchbox, "Relay 1", plumbing.one)
-    switch2 = RelaySwitch.Buttons(b, 1, arduinoSwitchbox, "Relay 2", plumbing.two)
-    switch3 = RelaySwitch.Buttons(c, 2, arduinoSwitchbox, "Relay 3", plumbing.three)
-    switch4 = RelaySwitch.Buttons(d, 3, arduinoSwitchbox, "Relay 4", plumbing.four)
-    switch5 = RelaySwitch.Buttons(a, 4, arduinoSwitchbox, "Relay 5", plumbing.five)
-    switch6 = RelaySwitch.Buttons(b, 5, arduinoSwitchbox, "Relay 6", plumbing.six)
-    switch7 = RelaySwitch.StepperSlider(c, 0, arduinoSwitchbox)
-    switch8 = RelaySwitch.StepperSlider(d, 1, arduinoSwitchbox)
+    if(DEBUG):
+        switch1 = RelaySwitch.Buttons(a, 0, arduinoSwitchbox, "Relay 1", plumbing.one)
+        switch2 = RelaySwitch.Buttons(b, 1, arduinoSwitchbox, "Relay 2", plumbing.two)
+        switch3 = RelaySwitch.Buttons(c, 2, arduinoSwitchbox, "Relay 3", plumbing.three)
+        switch4 = RelaySwitch.Buttons(d, 3, arduinoSwitchbox, "Relay 4", plumbing.four)
+        switch5 = RelaySwitch.Buttons(a, 4, arduinoSwitchbox, "Relay 5", plumbing.five)
+        switch6 = RelaySwitch.Buttons(b, 5, arduinoSwitchbox, "Relay 6", plumbing.six)
+        switch7 = RelaySwitch.StepperSlider(c, 0, arduinoSwitchbox)
+        switch8 = RelaySwitch.StepperSlider(d, 1, arduinoSwitchbox)
     # attaches rows to root tkinter GUI
     a.pack()
     b.pack()
     c.pack()
+    # barGraph=BarDisplay.BarDisplay(d, 'white', 1, Thermocouple_Count)
+    # barGraph.getWidget().pack(side="left")
+
+    lineGraph=LineGraph.LineGraph(d, count=2, datapoints=200, floor=-90, ceiling=90)
+
+    lineFig=lineGraph.getFig()
+    ani = animation.FuncAnimation(lineFig, func=lineGraph.animate, interval=100, blit=False)
+
     d.pack()
 
     g = tk.Frame(root)
     h = tk.Frame(root)
-    s = tk.Button(root, text="STARTUP", padx=40, pady=10, font="Verdana 14", bg="yellow", command=startup,
-                  activebackground="yellow")
-    off = tk.Button(root, text="All OFF", padx=30, pady=10, font="Verdana 14", bg="RED", command=allOff,
-                    activebackground="RED")
-
-    s.pack(pady=pad)
-    off.pack(pady=pad)
+    # s = tk.Button(root, text="STARTUP", padx=40, pady=10, font="Verdana 14", bg="yellow", command=startup,
+    #               activebackground="yellow")
+    # off = tk.Button(root, text="All OFF", padx=30, pady=10, font="Verdana 14", bg="RED", command=allOff,
+    #                 activebackground="RED")
+    #
+    # s.pack(pady=pad)
+    # off.pack(pady=pad)
 
 
     # ------------------------ DATA LOGGER GAUGE ELEMENTS -----------------------------
@@ -237,7 +274,7 @@ if __name__ == '__main__':
     g1.getWidget().pack(side="left")
     g2 = Gauge.Gauge(g, 'black', 5)
     g2.setText("Nan", "A1")
-    g2.getWidget().pack(side="left")
+    g2.getWidget().pack(side="right")
     g3 = Gauge.Gauge(h, 'black', 5)
     g3.setText("Nan", "A2")
     g3.getWidget().pack(side="left")
@@ -248,11 +285,14 @@ if __name__ == '__main__':
     h.pack()
 
 
+    i=0
+    temp=0
     '''----------------------------
     ------ MAIN PROGRAM LOOP ------
     ----------------------------'''
     prevCon = True
     while True:
+        temp+=1
         # ARDUINO CONNECTION CHECK
         status = findArduino(getPorts())
         if (status == "None"):
@@ -262,19 +302,21 @@ if __name__ == '__main__':
             g3.setText("Nan", "A2")
             g4.setText("Nan", "A3")
             prevCon = False
+            print("No Line")
         elif (not prevCon and status != 'None'):
+            print("Line Found")
             try:
                 arduinoSwitchbox = serial.Serial(status.split()[0], 115200)
-                time.sleep(5)
                 connectionLabel.configure(text='CONNECTED ' + status, fg="#41d94d")
-                switch1.setArduino(arduinoSwitchbox)
-                switch2.setArduino(arduinoSwitchbox)
-                switch3.setArduino(arduinoSwitchbox)
-                switch4.setArduino(arduinoSwitchbox)
-                switch5.setArduino(arduinoSwitchbox)
-                switch6.setArduino(arduinoSwitchbox)
-                switch7.setArduino(arduinoSwitchbox)
-                switch8.setArduino(arduinoSwitchbox)
+                if(DEBUG):
+                    switch1.setArduino(arduinoSwitchbox)
+                    switch2.setArduino(arduinoSwitchbox)
+                    switch3.setArduino(arduinoSwitchbox)
+                    switch4.setArduino(arduinoSwitchbox)
+                    switch5.setArduino(arduinoSwitchbox)
+                    switch6.setArduino(arduinoSwitchbox)
+                    switch7.setArduino(arduinoSwitchbox)
+                    switch8.setArduino(arduinoSwitchbox)
                 prevCon = True
             except SerialException:
                 print("ERROR: LOADING...")
@@ -288,8 +330,9 @@ if __name__ == '__main__':
         except SerialException:
             strSerial = ''#
 
-        data = strSerial.split("\\t")
-
+        #data = strSerial.split("\\t")
+        data = strSerial.split(",")
+        print(data)
         if (data[0] == "Time"):
             # detect serial data start
             file = open(fileName, "a")
@@ -308,10 +351,27 @@ if __name__ == '__main__':
             g3.setText(data[3], "A2")
             g4.setAngle(abs(5 * float(data[4])) / 1023.0)
             g4.setText(data[4].replace('\n', ''), "A3")
-        plumbing.s2.setPercentage(switch7.getVal())
-        plumbing.s1.setPercentage(switch8.getVal())
+
+            # barGraph.changeTemp(0, float(data[38]))
+            # barGraph.changeTemp(1, float(data[39]))
+
+        # time.sleep(1)
+        # i+=1
+
+        if(DEBUG):
+            plumbing.s1.setPercentage(switch8.getVal())
+            plumbing.s2.setPercentage(switch7.getVal())
 
         plumbing.updatePipeStatus()
 
+        #for testing when not hooked up to ECU/serial port
+        lineGraph.nextPoint(temp%100, 0)
+        lineGraph.nextPoint(((temp+50)%100), 1)
+
+#must be hooked up to ECU and recieving data through serial in order to work
+#        lineGraph.nextPoint(float(data[39], 0)
+
+
+        root.update_idletasks()
         root.update()
         plumbing.getWindow().update()

@@ -11,7 +11,7 @@ reusability. The Component class works by taking in the basic parameters of the 
 background color, width and height of the local canvas, 4 input parameters indicating which sides
 of the components have pipes and the color of the fluid.
 """
-
+ 
 class Component:
     # The following class has been defined to be inherited by the different P&ID components
     # as many P&ID components share several attributes (excluding the nozzle, tank, and pipes)
@@ -112,6 +112,7 @@ class Component:
         self.bottom = bottom
         self.left = left
 
+
     def getWidget(self):
         return self.c
 
@@ -133,74 +134,85 @@ class Solenoid(Component):
                                             outline='white')
         self.c.create_text(width / 2.0, height / 2.0, font=("Arial", 10, 'bold'), fill="white", text=str(num))
 
+        self.isManual = False
+
     def setIn(self, num):
         self.inlet = num
 
     def setOut(self, num):
         self.outlet = num
 
+    # if true, manual valve which is grey
+    # if false, color changes
+    def setType(self, isManual):
+        self.isManual = isManual
+        if(isManual):
+            self.c.itemconfig(self.fill, fill='#4d4d4d')
+
+
 
     def setState(self, open):
         inlet = False
-        if (self.inlet == 1):
-            if(self.top is not None and self.top.getState()):
-                self.c.itemconfig(self.f1, fill=self.fluidColor)
-                inlet = True
-            else:
-                self.c.itemconfig(self.f1, fill='black')
-        if (self.inlet == 2):
-            if(self.right is not None and self.right.getState()):
-                self.c.itemconfig(self.f2, fill=self.fluidColor)
-                inlet = True
-            else:
-                self.c.itemconfig(self.f2, fill='black')
-        if (self.inlet == 3):
-            if (self.bottom is not None and self.bottom.getState()):
-                self.c.itemconfig(self.f3, fill=self.fluidColor)
-                inlet = True
-            else:
-                self.c.itemconfig(self.f3, fill='black')
-        if (self.inlet == 4):
-            if (self.left is not None and self.left.getState()):
-                self.c.itemconfig(self.f4, fill=self.fluidColor)
-                inlet = True
-            else:
-                self.c.itemconfig(self.f4, fill='black')
-
-        if(open):
-            self.state = True
-            self.c.itemconfig(self.fill, fill='#41d94d')
-            if (self.outlet == 1):
-                if(inlet):
+        if(not self.isManual):
+            if (self.inlet == 1):
+                if(self.top is not None and self.top.getState()):
                     self.c.itemconfig(self.f1, fill=self.fluidColor)
+                    inlet = True
                 else:
                     self.c.itemconfig(self.f1, fill='black')
-            if (self.outlet == 2):
-                if (inlet):
+            if (self.inlet == 2):
+                if(self.right is not None and self.right.getState()):
                     self.c.itemconfig(self.f2, fill=self.fluidColor)
+                    inlet = True
                 else:
                     self.c.itemconfig(self.f2, fill='black')
-            if (self.outlet == 3):
-                if (inlet):
+            if (self.inlet == 3):
+                if (self.bottom is not None and self.bottom.getState()):
                     self.c.itemconfig(self.f3, fill=self.fluidColor)
+                    inlet = True
                 else:
                     self.c.itemconfig(self.f3, fill='black')
-            if (self.outlet == 4):
-                if (inlet):
+            if (self.inlet == 4):
+                if (self.left is not None and self.left.getState()):
                     self.c.itemconfig(self.f4, fill=self.fluidColor)
+                    inlet = True
                 else:
                     self.c.itemconfig(self.f4, fill='black')
-        else:
-            self.state = False
-            self.c.itemconfig(self.fill, fill = '#ab1f1f')
-            if (self.outlet == 1):
-                self.c.itemconfig(self.f1, fill='black')
-            if (self.outlet == 2):
-                self.c.itemconfig(self.f2, fill='black')
-            if (self.outlet == 3):
-                self.c.itemconfig(self.f3, fill='black')
-            if (self.outlet == 4):
-                self.c.itemconfig(self.f4, fill='black')
+
+            if(open):
+                self.state = True
+                self.c.itemconfig(self.fill, fill='#41d94d')
+                if (self.outlet == 1):
+                    if(inlet):
+                        self.c.itemconfig(self.f1, fill=self.fluidColor)
+                    else:
+                        self.c.itemconfig(self.f1, fill='black')
+                if (self.outlet == 2):
+                    if (inlet):
+                        self.c.itemconfig(self.f2, fill=self.fluidColor)
+                    else:
+                        self.c.itemconfig(self.f2, fill='black')
+                if (self.outlet == 3):
+                    if (inlet):
+                        self.c.itemconfig(self.f3, fill=self.fluidColor)
+                    else:
+                        self.c.itemconfig(self.f3, fill='black')
+                if (self.outlet == 4):
+                    if (inlet):
+                        self.c.itemconfig(self.f4, fill=self.fluidColor)
+                    else:
+                        self.c.itemconfig(self.f4, fill='black')
+            else:
+                self.state = False
+                self.c.itemconfig(self.fill, fill = '#ab1f1f')
+                if (self.outlet == 1):
+                    self.c.itemconfig(self.f1, fill='black')
+                if (self.outlet == 2):
+                    self.c.itemconfig(self.f2, fill='black')
+                if (self.outlet == 3):
+                    self.c.itemconfig(self.f3, fill='black')
+                if (self.outlet == 4):
+                    self.c.itemconfig(self.f4, fill='black')
 
 
 
@@ -810,7 +822,7 @@ class Nozzle:
         self.plot.append((0.1 * width, height * 0.7))
         self.plot.append((0.1 * width, height * 0.1))
         self.plot.append((1, height * 0.1))
-        
+
         self.base = self.c.create_polygon(self.plot, outline='white')
 
         self.thrust = self.c.create_text(width/2.0, (height/2.0) - padding, font=("Arial", 10), fill="white", text='thrust')
