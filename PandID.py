@@ -61,6 +61,8 @@ class UCI_VTF_Plumbing:
         self.thirteen = DiagramComponents.Solenoid(self.win, 'black', 13, gridLen, gridLen, True, False, True, False)
         self.fourteen = DiagramComponents.Solenoid(self.win, 'black', 14, gridLen, gridLen, True, False, True, False)
         self.fifteen = DiagramComponents.Solenoid(self.win, 'black', 15, gridLen, gridLen, True, False, True, False)
+        self.two.setType(True)
+        self.three.setType(True)
         self.eight.setType(True)
         self.nine.setType(True)
         self.ten.setType(True)

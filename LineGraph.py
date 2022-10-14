@@ -9,13 +9,26 @@ import numpy as np
 import time
 import tkinter as tk
 import matplotlib.pyplot as plt
- 
-class LineGraph:
-    def __init__(self, root, count=2, datapoints=100, floor=-100, ceiling=100, mving_avg_Size=10):
-        #root= TK object which LineGraph will be placed onto
-        #count= number of lines which will be
 
-        colors=['r','b','g', 'c', 'm', 'y']
+
+def checkVS( arr1, arr2):
+    if (len(arr1) != len(arr2)):
+        print("Amount of Valves are unexpected")
+
+    for indx, val in enumerate(arr1):
+        if val != arr2[indx]:
+            return False
+
+    return True
+class LineGraph:
+    def __init__(self, root, count=2, datapoints=100, floor=-100, ceiling=100, mving_avg_Size=10, valves=5):
+        #root= TK object which LineGraph will be placed onto
+        #count= number of TC's which will be displayed
+        #datapoints = number of temperature data points to be represented in single instance of the graph
+
+        self.datapoints=datapoints
+        TC_Names = ["HE", "LNG", "LOX", "TC4", "TC5", "TC6"]
+        colors=['r', 'b', 'c', 'g', 'm', 'y']
         if count>=6:
             self.activeLines=6
         else:
@@ -49,14 +62,16 @@ class LineGraph:
         #redisplays readings next to the legend in the top right corner
         self.static_annotations=[ self.ax1.annotate(str(i), xy=(datapoints*1.05, ceiling/2 +18 -(6*i) ), textcoords='data') for i in range(self.activeLines) ]
 
+        self.valve_annotations=[]# self.ax1.annotate(str(i), xy=(datapoints*1.05, ceiling/2 +18 -(6*i) ), textcoords='data') for i in range(2) ]
+        self.valve_annotations.append(self.ax1.annotate("Time since Last Actuation: %s" % "N/A", xy=(self.datapoints/3, -10), textcoords='data'))
+        self.valve_annotations.append(self.ax1.annotate("Time since Last Random   : %s" % "N/A", xy=(self.datapoints/3, -17), textcoords='data'))
+
 
 
         for i in range(self.activeLines):
-            #self.lineControl[i], =ax1.plot(self.xList, [(-1-i)]*datapoints, colors[i], marker='o', label=genName)
-            genName="TC"+str(i+1)
-            self.lineControl[i], =self.ax1.plot(self.xList, [(-1-i)]*datapoints, colors[i], label=genName)
+            self.lineControl[i], =self.ax1.plot(self.xList, [(-1-i)]*datapoints, colors[i], label=TC_Names[i])
 
-        self.ax1.plot(self.xList, [0]*datapoints, label="origin")
+        self.ax1.plot(self.xList, [0]*datapoints, "w")
 
 
         leg = plt.legend(loc='upper right')
@@ -66,6 +81,20 @@ class LineGraph:
         print(type(self.plotcanvas))
         self.plotcanvas.get_tk_widget().grid(column=1, row=1)
 
+        #init variable for valve checking
+        self.valveCount=valves
+        self.timeLastData=0 #timestamp of current data point
+        self.timeLastValve=0 #timestamp any valve last actuated
+        self.timeLastRandom=0 #timestamp of last random actuatuation
+        self.prevValve1 = np.zeros(self.valveCount) #last valve state recorded
+        self.prevValve2 = np.zeros(self.valveCount) #2nd to last valve state recorded
+        self.ttt=0
+        self.firstValve=False
+        self.firstRand=False
+
+
+
+
 
 
     def getWidget(self):
@@ -73,8 +102,9 @@ class LineGraph:
     def getFig(self):
         return self.fig
     def animate(self, i):
+
         #TODO apply animate to all lines in class
-        print(self.activeLines)
+        #print("active lines ="+str(self.activeLines))
 
         for i in range(self.activeLines):
             self.lineControl[i].set_data(self.xList, self.yCoords[i])
@@ -112,3 +142,55 @@ class LineGraph:
             self.yCoords[index].popleft()
             self.yCoords[index].append(avg)
             print("mvAvg "+str(index)+"="+str(avg))
+
+# valve Check functions
+    def valveCheck(self, valveStates):
+        #function expects a valveStates Array of binary values representing state of the valves`
+        # function will check if any valves have changed state since last call
+        # self.ttt+=1
+        # # if(self.ttt%10==0):
+        # #     valveStates[0]=1
+        # if(self.ttt>40):
+        #     valveStates[0]=1
+        # if(self.ttt>100):
+        #     self.ttt=0
+
+
+        currValve=np.array(valveStates)
+
+        self.timeLastData = time.time()
+        if(len(currValve)!=self.valveCount):
+            print("value Count is not matching number of valves provided")
+            print(len(currValve))
+            print("!=")
+            print(self.valveCount)
+
+
+       # if(currValve==self.prevValve1): # no change
+        if checkVS(currValve, self.prevValve1):
+            self.prevValve2=self.prevValve1
+            t1= self.timeLastData-self.timeLastValve
+        else:
+            self.firstValve=True
+            #valve has actuated
+            t1=0
+            self.timeLastValve = self.timeLastData
+
+            #check if current valve state is equal to the valve state 2 cycles ago, if it is this might indicate that a random actuation occured and rapidly flipped back
+            #NOTE: this is a very specific case of random actuation, assuming a random actuation occurs in a single data point and will revert back to its correct state at the next data point. Random actuations lasting longer than this will not be detected
+            # trust the general actuation detection over the random actuation detection as the sign for a random actuataion within a data stream is not known for sure
+            #if(currValve==self.prevValve2):
+            if checkVS(currValve, self.prevValve2):
+                self.firstRand=True
+                self.timeLastRandom = time.time()
+
+            self.prevValve2 = self.prevValve1
+            self.prevValve1 = currValve
+
+        #draw time since last change
+        if (self.firstValve):
+            self.valve_annotations[0].set_text("Time since Last Actuation: %s" % t1)
+        if(self.firstRand):
+            self.valve_annotations[1].set_text("Time since Last Random   : %s" % (self.timeLastData-self.timeLastRandom))
+
+
